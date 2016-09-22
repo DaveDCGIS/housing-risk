@@ -27,6 +27,10 @@ logging.warning("--------------------starting load_data module------------------
 #############################################################################
 #Classes to hold and manipulate our data
 #############################################################################
+# Notes:
+# 	-After creating this, I found out about Pandas Panels, which are a 3D data model. Maybe should restructure this to use panel instead of a list of snapshots with dataframes.
+
+
 
 #Container for a single copy of the sec8contracts database from HUD. Contains both database tables (as pandas dataframes) plus dates.
 class Sec8Snapshot(object):
@@ -63,6 +67,9 @@ class Sec8Timeline(object):
 #############################################################################
 #Data to be used
 #############################################################################
+# Data notes:
+#	-TODO - should be careful about cluttering global namespace when this is loaded as a module. Should wrap data info in a container object.
+
 
 #Expected by the load_sec8_contracts function
 sec8_flatfile_paths = {
@@ -115,9 +122,9 @@ def load_sec8_contracts(paths):
 			#-load the headers of the first file, and make sure headers of all subsequent files match (or, compare to a hard-coded list)
 
 		#Store all the Pandas data frame objects in temporary variables, to be passed to the Snapshot object when it is created.
-		contracts_df = pd.read_csv(paths[key_paths]['contracts'], parse_dates=['tracs_effective_date','tracs_overall_expiration_date','tracs_current_expiration_date'])
+		contracts_df = pd.read_csv(paths[key_paths]['contracts'], index_col="contract_number",parse_dates=['tracs_effective_date','tracs_overall_expiration_date','tracs_current_expiration_date'])
 		logging.info("    Loaded 'contracts'")
-		properties_df = pd.read_csv(paths[key_paths]['properties'], parse_dates=['ownership_effective_date'])
+		properties_df = pd.read_csv(paths[key_paths]['properties'], index_col="property_id",parse_dates=['ownership_effective_date'])
 		logging.info("    Loaded 'properties'")
 		date = paths[key_paths]['date']
 		snapshot = Sec8Snapshot(contracts_df,properties_df,date)
@@ -139,6 +146,8 @@ def load_sec8_contracts(paths):
 #############################################################################
 #Other Stuff
 #############################################################################
+logging.warning("--------------------load_data module concluded------------------")
+
 
 if __name__ == "__main__":
 	sec8_timeline = load_sec8_contracts(sec8_flatfile_paths)
