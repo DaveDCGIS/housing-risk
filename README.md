@@ -44,3 +44,27 @@ This project currently assumes you are using Anaconda for virtual environments. 
 * *environment.yml* - for setting up the Anaconda virtual environment.
 * *LICENSE* - basic MIT license, says anyone can copy and use the code for any reason, but they can't sue us.
 * *README.md* - this file, summarizing project info and how to set up the project.
+
+
+# Using AWS Sync
+This is like Dropbox or similar services, but manually using the command line. There is only ever one copy of the data (unlike Git), and you can download changes from S3 or push your own changes to S3. S3 is a file storage service from Amazon Web Services. 
+
+(add `--profile ds-hud` if needed)
+
+## Before doing work, when teammates add data, and before you download new data from the internet to your hard drive
+
+1. Navigate to the project repository. Type `ls` (`dir` on windows) and make sure you see the `data` folder.
+2. See if there are any updates to fetch: `aws s3 sync s3://huddata data --dryrun`  
+  * This will list all the actions that would be performed (e.g. 'download: /data/newfile.txt'). If none, no action needed. If there are some, make sure they will not cause any conflicts with changes you have made locally since you last synced.
+3. Download the data: `aws s3 sync s3://huddata data --dryrun`. This copies data *from* 's3://huddata' *to* the 'data' folder. 
+
+
+## If you add or update any data files
+
+1. Make sure you download updates before you start working.  
+2. Navigate to the project repo. Type `ls` (`dir`) and check for the `data` folder
+3. Test push your changes: `aws s3 sync data s3://huddata --dryrun`
+4. Make sure it all is what you want, then do it for real `aws s3 sync data s3://huddata`. This pushes your folder contents *to* S3.
+
+## If you delete files
+1. Same as above, but add the `--delete` flag. 
