@@ -1,6 +1,9 @@
 
 import logging
 import psycopg2
+import datetime
+import time
+import pandas as pd
 
 
 #Configure logging. See /logs/example-logging.py for examples of how to use this.
@@ -8,6 +11,14 @@ logging_filename = "../logs/ingestion.log"
 logging.basicConfig(filename=logging_filename, level=logging.DEBUG)
 logging.warning("--------------------starting module------------------")
 
+#############################
+#CONSTANTS
+#############################
+constants = {
+	#used with psycopg2.connect('')
+	'db_connect_str': "dbname=temphousingrisk user=postgres password=postgres port=5433",
+	'snapshots_csv_filename': 'snapshots_to_load.csv',
+}
 
 #sample code from http://initd.org/psycopg/docs/usage.html
 def sample_add_to_database():
@@ -20,7 +31,7 @@ def sample_add_to_database():
 	#  3) user=postgres refers to the default install user, but the password=postgres is set manually during configuration. 
 	#     You can either edit your default user password, or add a new user. Note, setting the default user to NULL caused some problems for me.
 	#  4) this function will throw an error the second time you run it because it will try to recreate a TABLE that already exists
-	conn = psycopg2.connect("dbname=temphousingrisk user=postgres password=postgres port=5433")
+	conn = psycopg2.connect(constants['db_connect_str'])
 
 	# Open a cursor to perform database operations
 	cur = conn.cursor()
@@ -34,8 +45,8 @@ def sample_add_to_database():
 
 	# Query the database and obtain data as Python objects
 	cur.execute("SELECT * FROM test;")
-		print("Retreiving sample data from the database:")
-		print(cur.fetchone())
+	print("Retreiving sample data from the database:")
+	print(cur.fetchone())
 
 	# Make the changes to the database persistent
 	conn.commit()
@@ -46,12 +57,27 @@ def sample_add_to_database():
 
 
 
+def quick_add_contracts_tables():
+
+	# Get the list of files to load - using Pandas dataframe (df), although we don't need most of the functionality that Pandas provides.
+	paths_df = pd.read_csv(constants['snapshots_csv_filename'], parse_dates=['date'])
+
+	#Example of how to access the filenames we will need to use
+	print(properties_df.get_value(0,'contracts_csv_filename'))
+	
+	# Pseudocode
+		# Connect to the database
+		# For each row of the paths_df
+			# Append the 'folder_path' to the 'contracts_csv_filename' and the 'properties_csv_filename'
+			# Load the csv files
+			# Create a new database table for each CSV file
+			
 
 
 
 if __name__ == '__main__':
-	sample_add_to_database()
-	print("completed")
+	#sample_add_to_database()
+	quick_add_contracts_tables()
 
 
 
