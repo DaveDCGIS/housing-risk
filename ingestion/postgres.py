@@ -81,9 +81,10 @@ def quick_add_contracts_tables():
 		# Identify which columns to read/write from CSV to SQL
 		# Two different formats, one for CSV reading and one for SQL writing.
 		# This text can be created using  join on the rows of the contracts_columns.csv file.
-		#	TODO Columns related to rents for each bedroom type start with integers, which are not valid names for columns in SQL.
-		#	     Current code skips these columns - this should be handled by mapping/renaming
-		#        Column names currently excluded:  0BR_count integer, 1BR_count integer, 2BR_count integer, 3BR_count integer, 4BR_count integer, 5plusBR_count integer, 0BR_FMR Decimal(19,4), 1BR_FMR Decimal(19,4), 2BR_FMR Decimal(19,4), 3BR_FMR Decimal(19,4), 4BR_FMR Decimal(19,4)
+		#	     Columns related to rents for each bedroom type start with integers, which are not valid names for columns in SQL.
+		#	     Current code renames these columns by appending a 'd' to teh start of the column name. 
+		#		 Therefore, we need to use column order instead of column names when reading/writing
+		#        
 		columns_list = ('contract_number','property_id','property_name_text','tracs_effective_date','tracs_overall_expiration_date','tracs_overall_exp_fiscal_year','tracs_overall_expire_quarter','tracs_current_expiration_date','tracs_status_name','contract_term_months_qty','assisted_units_count','is_hud_administered_ind','is_acc_old_ind','is_acc_performance_based_ind','contract_doc_type_code','program_type_name','program_type_group_code','program_type_group_name','rent_to_FMR_ratio','rent_to_FMR_description', 'd0BR_count','d1BR_count','d2BR_count','d3BR_count','d4BR_count','d5plusBR_count','d0BR_FMR','d1BR_FMR','d2BR_FMR','d3BR_FMR','d4BR_FMR')
 		columns_SQL_query = "id serial PRIMARY KEY, contract_number varchar(255), property_id integer, property_name_text varchar(255), tracs_effective_date DATE, tracs_overall_expiration_date DATE, tracs_overall_exp_fiscal_year integer, tracs_overall_expire_quarter varchar(2), tracs_current_expiration_date DATE, tracs_status_name varchar(255), contract_term_months_qty integer, assisted_units_count integer, is_hud_administered_ind varchar(1), is_acc_old_ind varchar(1), is_acc_performance_based_ind varchar(1), contract_doc_type_code varchar(64), program_type_name varchar(255), program_type_group_code varchar(64), program_type_group_name varchar(255), rent_to_FMR_ratio Decimal(6,2), rent_to_FMR_description varchar(255), d0BR_count integer, d1BR_count integer, d2BR_count integer, d3BR_count integer, d4BR_count integer, d5plusBR_count integer, d0BR_FMR Decimal(19,4), d1BR_FMR Decimal(19,4), d2BR_FMR Decimal(19,4), d3BR_FMR Decimal(19,4), d4BR_FMR Decimal(19,4)"
 			
