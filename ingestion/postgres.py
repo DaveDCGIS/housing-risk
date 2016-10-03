@@ -18,7 +18,7 @@ logging.warning("--------------------starting module------------------")
 constants = {
 	#used with psycopg2.connect('')
 	'db_connect_str': "dbname=temphousingrisk user=postgres password=postgres port=5433",
-	'snapshots_csv_filename': 'snapshots_to_load.csv',
+	'snapshots_csv_filename': 'snapshots_to_load_test.csv',
 }
 
 #sample code from http://initd.org/psycopg/docs/usage.html
