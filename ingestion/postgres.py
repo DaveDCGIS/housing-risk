@@ -5,7 +5,7 @@ import datetime
 import time
 import pandas as pd
 import csv
-from sqlalchemy import create_engine
+
 
 #Configure logging. See /logs/example-logging.py for examples of how to use this.
 logging_filename = "../logs/ingestion.log"
@@ -70,23 +70,11 @@ def quick_add_contracts_tables():
 	conn = psycopg2.connect(constants['db_connect_str'])
 	cur = conn.cursor()
 
-
-	# A different way to connect to SQL - uses sqlalchemy so that we can write from pandas dataframe.
-#	engine = create_engine('postgresql://postgres:postgres@localhost:5433/temphousingrisk')
-	
-
 	for index, row in paths_df.iterrows():
 		
-		#Extract file info from the paths_df
+		#Get the full paths to the CSV files
 		contracts_path = row['folder_path'] + row['contracts_csv_filename']
 		properties_path = row['folder_path'] + row['properties_csv_filename']
-		
-		#Drop the table if it already exists (next code will recreate it)
-		tablename="con_" + row['ref_name']
-		cur.execute("DROP TABLE " + tablename + ";")
-		
-#######################################		
-		#This is the psycopg2 method. Currently this works but has issues with data types. 
 
 		file = open(contracts_path, 'r')	#'r' means open the file for reading only
 
@@ -103,8 +91,6 @@ def quick_add_contracts_tables():
 		#Create the needed database table, removing it if it already exists
 		tablename="con_" + row['ref_name']
 		cur.execute("DROP TABLE " + tablename + ";")
-
-
 		cur.execute("CREATE TABLE " + tablename + " (" + columns_SQL_query + ");")
 
 		# Get data from CSV into SQL. TODO - this for loop is definitely going to be slower than desired.
@@ -115,11 +101,7 @@ def quick_add_contracts_tables():
 		#This method only works if the full table is added. Using the for row in csv_reader method instead
 		cur.copy_from(file, tablename, sep=',', columns=columns_list)
 		file.close()
-#######################################
 
-		#This is the sqlalchemy method
-#		contracts_df = pd.read_csv(contracts_path, parse_dates=['tracs_effective_date','tracs_overall_expiration_date','tracs_current_expiration_date'])
-#		contracts_df.to_sql(tablename, engine, if_exists='replace')
 
 	#Make changes persistent and close the database
 	conn.commit()
