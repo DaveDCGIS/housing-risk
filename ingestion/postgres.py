@@ -4,7 +4,8 @@ import psycopg2
 import datetime
 import time
 import pandas as pd
-
+import csv
+from sqlalchemy import create_engine
 
 #Configure logging. See /logs/example-logging.py for examples of how to use this.
 logging_filename = "../logs/ingestion.log"
@@ -63,17 +64,67 @@ def quick_add_contracts_tables():
 	paths_df = pd.read_csv(constants['snapshots_csv_filename'], parse_dates=['date'])
 
 	#Example of how to access the filenames we will need to use
-	print(properties_df.get_value(0,'contracts_csv_filename'))
+	print(paths_df.get_value(0,'contracts_csv_filename'))
 	
-	# Pseudocode
-		# Connect to the database
-		# For each row of the paths_df
-			# Append the 'folder_path' to the 'contracts_csv_filename' and the 'properties_csv_filename'
-			# Load the csv files
-			# Create a new database table for each CSV file
+	# Connect to the database
+	conn = psycopg2.connect(constants['db_connect_str'])
+	cur = conn.cursor()
+
+
+	# A different way to connect to SQL - uses sqlalchemy so that we can write from pandas dataframe.
+#	engine = create_engine('postgresql://postgres:postgres@localhost:5433/temphousingrisk')
+	
+
+	for index, row in paths_df.iterrows():
+		
+		#Extract file info from the paths_df
+		contracts_path = row['folder_path'] + row['contracts_csv_filename']
+		properties_path = row['folder_path'] + row['properties_csv_filename']
+		
+		#Drop the table if it already exists (next code will recreate it)
+		tablename="con_" + row['ref_name']
+		cur.execute("DROP TABLE " + tablename + ";")
+		
+#######################################		
+		#This is the psycopg2 method. Currently this works but has issues with data types. 
+
+		file = open(contracts_path, 'r')	#'r' means open the file for reading only
+
+		# Identify which columns to read/write from CSV to SQL
+		# Two different formats, one for CSV reading and one for SQL writing.
+		# This text can be created using  join on the rows of the contracts_columns.csv file.
+		#	TODO Columns related to rents for each bedroom type start with integers, which are not valid names for columns in SQL.
+		#	     Current code skips these columns - this should be handled by mapping/renaming
+		#        Column names currently excluded:  0BR_count integer, 1BR_count integer, 2BR_count integer, 3BR_count integer, 4BR_count integer, 5plusBR_count integer, 0BR_FMR Decimal(19,4), 1BR_FMR Decimal(19,4), 2BR_FMR Decimal(19,4), 3BR_FMR Decimal(19,4), 4BR_FMR Decimal(19,4)
+		columns_list = ('contract_number','property_id','property_name_text','tracs_effective_date','tracs_overall_expiration_date','tracs_overall_exp_fiscal_year','tracs_overall_expire_quarter','tracs_current_expiration_date','tracs_status_name','contract_term_months_qty','assisted_units_count','is_hud_administered_ind','is_acc_old_ind','is_acc_performance_based_ind','contract_doc_type_code','program_type_name','program_type_group_code','program_type_group_name','rent_to_FMR_ratio','rent_to_FMR_description', 'd0BR_count','d1BR_count','d2BR_count','d3BR_count','d4BR_count','d5plusBR_count','d0BR_FMR','d1BR_FMR','d2BR_FMR','d3BR_FMR','d4BR_FMR')
+		columns_SQL_query = "id serial PRIMARY KEY, contract_number varchar(255), property_id integer, property_name_text varchar(255), tracs_effective_date DATE, tracs_overall_expiration_date DATE, tracs_overall_exp_fiscal_year integer, tracs_overall_expire_quarter varchar(2), tracs_current_expiration_date DATE, tracs_status_name varchar(255), contract_term_months_qty integer, assisted_units_count integer, is_hud_administered_ind varchar(1), is_acc_old_ind varchar(1), is_acc_performance_based_ind varchar(1), contract_doc_type_code varchar(64), program_type_name varchar(255), program_type_group_code varchar(64), program_type_group_name varchar(255), rent_to_FMR_ratio Decimal(6,2), rent_to_FMR_description varchar(255), d0BR_count integer, d1BR_count integer, d2BR_count integer, d3BR_count integer, d4BR_count integer, d5plusBR_count integer, d0BR_FMR Decimal(19,4), d1BR_FMR Decimal(19,4), d2BR_FMR Decimal(19,4), d3BR_FMR Decimal(19,4), d4BR_FMR Decimal(19,4)"
 			
+			
+		#Create the needed database table, removing it if it already exists
+		tablename="con_" + row['ref_name']
+		cur.execute("DROP TABLE " + tablename + ";")
 
 
+		cur.execute("CREATE TABLE " + tablename + " (" + columns_SQL_query + ");")
+
+		# Get data from CSV into SQL. TODO - this for loop is definitely going to be slower than desired.
+		#csv_reader = csv.DictReader(file,dialect='excel', fieldnames=columns_list)
+		#for row in csv_reader:
+		#	cur.execute("INSERT INTO " + tablename + "VALUES")
+		
+		#This method only works if the full table is added. Using the for row in csv_reader method instead
+		cur.copy_from(file, tablename, sep=',', columns=columns_list)
+		file.close()
+#######################################
+
+		#This is the sqlalchemy method
+#		contracts_df = pd.read_csv(contracts_path, parse_dates=['tracs_effective_date','tracs_overall_expiration_date','tracs_current_expiration_date'])
+#		contracts_df.to_sql(tablename, engine, if_exists='replace')
+
+	#Make changes persistent and close the database
+	conn.commit()
+	cur.close()
+	conn.close()
 
 if __name__ == '__main__':
 	#sample_add_to_database()
