@@ -1,4 +1,7 @@
-ref_name,date,folder_path,access_filename,contracts_csv_filename,properties_csv_filename
-current,8/2/2016,..\data\section8\contracts_database\main-website\,MF_Assistance_&_Sec8_Contracts_2016-08-02.mdb,sec8contracts_2016-08-02.csv,properties_2016-08-02.csv
-ia_2015,9/5/2015,..\data\section8\contracts_database\internetArchive\,MF_Assistance_&_Sec8_Contracts_2015-09-05.mdb,sec8contracts_2015-09-05.csv,properties_2015-09-05.csv
-ia_2011,9/22/2011,..\data\section8\contracts_database\internetArchive\,MF_Assistance_&_Sec8_Contracts_2011-09-22.mdb,sec8contracts_2011-09-22.csv,properties_2011-09-22.csv
+type,table_name,date,path,filename,notes
+contracts,c2016-08,8/2/2016,..\data\section8\contracts_database\main-website\,sec8contracts_2016-08-02.csv,none
+properties,p2016-08,8/2/2016,..\data\section8\contracts_database\main-website\,properties_2016-08-02.csv,none
+contracts,c2015-09,9/5/2015,..\data\section8\contracts_database\internetArchive\,sec8contracts_2015-09-05.csv,none
+properties,p2015-09,9/5/2015,..\data\section8\contracts_database\internetArchive\,properties_2015-09-05.csv,none
+contracts,c2011-09,9/22/2011,..\data\section8\contracts_database\internetArchive\,sec8contracts_2011-09-22.csv,none
+properties,p2011-09,9/22/2011,..\data\section8\contracts_database\internetArchive\,properties_2011-09-22.csv,none
