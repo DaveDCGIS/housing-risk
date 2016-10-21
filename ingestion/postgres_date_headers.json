@@ -1,0 +1,10 @@
+{
+    "date_headers": [
+      "ownership_effective_date",
+      "tracs_effective_date",
+      "tracs_overall_expiration_date",
+      "tracs_current_expiration_date",
+
+      "Nonsense_column_name_Example"
+    ]
+}

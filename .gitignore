@@ -4,6 +4,7 @@
 
 *.zip
 credentials.csv
+secrets.json
 
 # Additional note!
 # the /data folder (for storing flat data files) and the /logs folder each have their own .gitignore file located in the folder
