@@ -68,14 +68,23 @@ def csv_to_sql(index_path):
         to_parse = list(set(parseable_headers) & set(headers))
         logging.info("  identified date columns: " + str(to_parse))
 
-        #Custom date parser required to handle null dates.
-        parser = lambda x: pd.to_datetime(x, format='%m/%d/%Y', errors='coerce')
-        csv_df = pd.read_csv(full_path, encoding="latin_1", parse_dates=to_parse, date_parser=parser) #'Parcel_owner_date'
+        csv_df = pd.read_csv(full_path, parse_dates=to_parse) #If we have null dates that are non-blank (coded nulls), need to use this: date_parser=parser #parser = lambda x: pd.to_datetime(x, format='%m/%d/%Y', errors='coerce')
         logging.info("  in memory...")
         csv_df.to_sql(tablename, engine, if_exists='replace')
         logging.info("  table loaded")
 
+def access_to_sql():
+    '''
+    Currently not working - can't get driver...
+    '''
+    import pyodbc
+    DBfile = "../data/section8/contracts_database/main-website/MF_Assistance_&_Sec8_Contracts_2016-08-02.mdb"
+    conn = pyodbc.connect('DRIVER={Microsoft Access Driver (*.mdb)};DBQ='+DBfile)
+    #or try this below if using with Access 2007, 2010 .accdb file
+    #conn = pyodbc.connect(r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ='+DBfile)
+    cursor = conn.cursor()
 
 if __name__ == '__main__':
     #sample_add_to_database()
     csv_to_sql(constants['manifest_filename'])
+    #access_to_sql()
