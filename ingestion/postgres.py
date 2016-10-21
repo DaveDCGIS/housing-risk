@@ -1,11 +1,20 @@
+##########################################################################
+## Summary
+##########################################################################
 
+'''
+Loads our flat file data into the Postgres database
+'''
+
+
+##########################################################################
+## Imports & Configuration
+##########################################################################
 import logging
-import psycopg2
-import datetime
-import time
+import json
 import pandas as pd
-import csv
 from sqlalchemy import create_engine
+import csv
 
 #Configure logging. See /logs/example-logging.py for examples of how to use this.
 logging_filename = "../logs/ingestion.log"
@@ -18,64 +27,55 @@ logging.getLogger().addHandler(logging.StreamHandler())
 #CONSTANTS
 #############################
 constants = {
-	'db_connect_str': "dbname=temphousingrisk user=postgres password=postgres port=5433", #used with psycopg2.connect('')
-	'engine_str': 'postgresql://postgres:postgres@localhost:5433/temphousingrisk', #used with create_engine() method
-	'snapshots_csv_filename': 'snapshots_to_load_test.csv',
+    'secrets_filename': 'secrets.json',
+    'manifest_filename': 'snapshots_to_load.csv',
+    'date_headers_filename': 'postgres_date_headers.json',
 }
 
-#sample code from http://initd.org/psycopg/docs/usage.html
-def sample_add_to_database():
-	# Connect to an existing database
-	# Troubleshooting notes:
-	#  1) Database must already be created
-	#  2) Make sure the port matches your copy of the database - this is different per installation.
-	#       Default is 5432, but if you have multiple Postgres installations it may be something else.
-	#       Check your Postgres installation folder \PostgreSQL\9.5\data\postgresql.conf to find your port.
-	#  3) user=postgres refers to the default install user, but the password=postgres is set manually during configuration.
-	#     You can either edit your default user password, or add a new user. Note, setting the default user to NULL caused some problems for me.
-	#  4) this function will throw an error the second time you run it because it will try to recreate a TABLE that already exists
-	conn = psycopg2.connect(constants['db_connect_str'])
+def get_connect_str():
+    "Loads the secrets json file to retrieve the connection string"
+    logging.info("Loading secrets from {}".format(constants['secrets_filename']))
+    with open(constants['secrets_filename']) as fh:
+        secrets = json.load(fh)
+    return secrets['database']['connect_str']
 
-	# Open a cursor to perform database operations
-	cur = conn.cursor()
-
-	# Execute a command: this creates a new table
-	cur.execute("CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar);")
-
-	# Pass data to fill a query placeholders and let Psycopg perform
-	# the correct conversion (no more SQL injections!)
-	cur.execute("INSERT INTO test (num, data) VALUES (%s, %s)", (100, "abc'def"))
-
-	# Query the database and obtain data as Python objects
-	cur.execute("SELECT * FROM test;")
-	print("Retreiving sample data from the database:")
-	print(cur.fetchone())
-
-	# Make the changes to the database persistent
-	conn.commit()
-
-	# Close communication with the database
-	cur.close()
-	conn.close()
+def get_column_names(path):
+    with open(path) as f:
+        myreader=csv.reader(f,delimiter=',')
+        headers = next(myreader)
+    return headers
 
 def csv_to_sql(index_path):
-	# Get the list of files to load - using Pandas dataframe (df), although we don't need most of the functionality that Pandas provides. #Example of how to access the filenames we will need to use: print(paths_df.get_value(0,'contracts_csv_filename'))
-	paths_df = pd.read_csv(index_path, parse_dates=['date'])
-	logging.info("Preparing to load " + str(len(paths_df.index)) + " files")
+    # Get the list of files to load - using Pandas dataframe (df)
+    paths_df = pd.read_csv(index_path, parse_dates=['date'])
+    logging.info("Preparing to load " + str(len(paths_df.index)) + " files")
 
-	# Connect to SQL - uses sqlalchemy so that we can write from pandas dataframe.
-	engine = create_engine(constants['engine_str'])
+    # Connect to SQL - uses sqlalchemy so that we can write from pandas dataframe.
+    connect_str = get_connect_str()
+    engine = create_engine(connect_str)
 
-	for index, row in paths_df.iterrows():
-		full_path = row['path'] + row['filename']
-		tablename = row['table_name']
-		logging.info("loading table " + str(index + 1) + " (" + tablename + ")")
-		contracts_df = pd.read_csv(full_path) # parse_dates=['tracs_effective_date','tracs_overall_expiration_date','tracs_current_expiration_date']
-		logging.info("  in memory...")
-		contracts_df.to_sql(tablename, engine, if_exists='replace')
-		logging.info("  table loaded")
+    for index, row in paths_df.iterrows():
+        full_path = row['path'] + row['filename']
+        tablename = row['table_name']
+
+        logging.info("loading table " + str(index + 1) + " (" + tablename + ")")
+
+        #Since different files have different date columns, we need to compare to the master list.
+        headers = list(get_column_names(full_path))
+        with open(constants['date_headers_filename']) as fh:
+            date_headers = json.load(fh)
+            parseable_headers = date_headers['date_headers']
+        to_parse = list(set(parseable_headers) & set(headers))
+        logging.info("  identified date columns: " + str(to_parse))
+
+        #Custom date parser required to handle null dates.
+        parser = lambda x: pd.to_datetime(x, format='%m/%d/%Y', errors='coerce')
+        csv_df = pd.read_csv(full_path, encoding="latin_1", parse_dates=to_parse, date_parser=parser) #'Parcel_owner_date'
+        logging.info("  in memory...")
+        csv_df.to_sql(tablename, engine, if_exists='replace')
+        logging.info("  table loaded")
 
 
 if __name__ == '__main__':
-	#sample_add_to_database()
-	csv_to_sql(constants['snapshots_csv_filename'])
+    #sample_add_to_database()
+    csv_to_sql(constants['manifest_filename'])
