@@ -28,7 +28,7 @@ logging.getLogger().addHandler(logging.StreamHandler())
 #############################
 constants = {
     'secrets_filename': 'secrets.json',
-    'manifest_filename': 'snapshots_to_load.csv',
+    'manifest_filename': 'temp_snapshots_test.csv',
     'date_headers_filename': 'postgres_date_headers.json',
 }
 
@@ -68,9 +68,12 @@ def csv_to_sql(index_path):
         to_parse = list(set(parseable_headers) & set(headers))
         logging.info("  identified date columns: " + str(to_parse))
 
-        csv_df = pd.read_csv(full_path, parse_dates=to_parse) #If we have null dates that are non-blank (coded nulls), need to use this: date_parser=parser #parser = lambda x: pd.to_datetime(x, format='%m/%d/%Y', errors='coerce')
+        csv_df = pd.read_csv(full_path, encoding="latin1", parse_dates=to_parse) #If we have null dates that are non-blank (coded nulls), need to use this: date_parser=parser #parser = lambda x: pd.to_datetime(x, format='%m/%d/%Y', errors='coerce')
         logging.info("  in memory...")
-        csv_df.to_sql(tablename, engine, if_exists='replace')
+
+        #Add a column so that we can put all the snapshots in the same table
+        csv_df['snapshot_id'] = row['snapshot_id']
+        csv_df.to_sql(tablename, engine, if_exists='append')
         logging.info("  table loaded")
 
 def access_to_sql():
