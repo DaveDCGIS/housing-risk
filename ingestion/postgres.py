@@ -45,6 +45,13 @@ def get_column_names(path):
         headers = next(myreader)
     return headers
 
+def manifest_to_sql(manifest_path, database_choice):
+    # Get the list of files to load - using Pandas dataframe (df)
+    paths_df = pd.read_csv(manifest_path, parse_dates=['date'])
+    connect_str = get_connect_str(database_choice)
+    engine = create_engine(connect_str)
+    paths_df.to_sql('manifest', engine, if_exists='replace')
+
 def csv_to_sql(manifest_path, database_choice):
     # Get the list of files to load - using Pandas dataframe (df)
     paths_df = pd.read_csv(manifest_path, parse_dates=['date'])
@@ -53,6 +60,7 @@ def csv_to_sql(manifest_path, database_choice):
     # Connect to SQL - uses sqlalchemy so that we can write from pandas dataframe.
     connect_str = get_connect_str(database_choice)
     engine = create_engine(connect_str)
+    csv_df = pd.read_csv(full_path, encoding="latin1", parse_dates="date", date_parser=parser) #If we have null dates that are non-blank (coded nulls), need to use this: date_parser=parser #parser = lambda x: pd.to_datetime(x, format='%m/%d/%Y', errors='coerce')
 
     for index, row in paths_df.iterrows():
         if row['skip'] == "skip":
@@ -93,4 +101,5 @@ def csv_to_sql(manifest_path, database_choice):
 if __name__ == '__main__':
     #sample_add_to_database()
     csv_to_sql(constants['manifest_filename'], 'database')
+    manifest_to_sql(constants['manifest_filename'], 'database')
     #access_to_sql()
