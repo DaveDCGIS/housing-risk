@@ -60,7 +60,7 @@ def csv_to_sql(manifest_path, database_choice):
     # Connect to SQL - uses sqlalchemy so that we can write from pandas dataframe.
     connect_str = get_connect_str(database_choice)
     engine = create_engine(connect_str)
-    csv_df = pd.read_csv(full_path, encoding="latin1", parse_dates="date", date_parser=parser) #If we have null dates that are non-blank (coded nulls), need to use this: date_parser=parser #parser = lambda x: pd.to_datetime(x, format='%m/%d/%Y', errors='coerce')
+    
 
     for index, row in paths_df.iterrows():
         if row['skip'] == "skip":
