@@ -1,8 +1,23 @@
-﻿--select distinct tracs_status_name from contracts;
-
-SELECT *
+﻿
+--These are just the fields we want to load as our decision table
+SELECT 	
+	
+	  snapshot_id
+	, contract_number
+	--This is a temporary approach to choosing among our various tests
+	, CASE WHEN expiration_extended_test = 'in' THEN 'in'
+		WHEN status_test = 'out' THEN 'out'
+		WHEN expiration_extended_test = 'no change' then 'no change'
+		ELSE 'other'
+	  END AS decision
+	, tracs_overall_expiration_date
+	, time_diff
+	, contract_term_months_qty
+	, tracs_status_name
+	, previous_status
+	  
 FROM(
-
+	--This is our full report of decision tests
 	SELECT 
 		--Has the expiration been extended?
 		  CASE WHEN EXTRACT(epoch FROM time_diff)/3600 > 0 
@@ -77,11 +92,22 @@ FROM(
 			  FROM public.contracts
 			  LEFT JOIN public.manifest
 			  ON public.contracts.snapshot_id = public.manifest.snapshot_id
-			  WHERE contract_number = '012063NISUP' --'OH16Q921001' --
+			  --WHERE contract_number = '012063NISUP' --'OH16Q921001' --
 		  ) as subtable
 	) AS decision_table
 ) AS final_table
 --Optionally, filter the results
 --WHERE expiration_test = 'in' 
 --	OR status_test = 'out'
-LIMIT 100;
+
+--Optionally, get just a subset of contract_numbers
+WHERE contract_number 
+IN (
+	SELECT DISTINCT contract_number
+	FROM contracts
+	LIMIT 200
+	)
+--LIMIT 1000
+
+
+;
