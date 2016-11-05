@@ -32,12 +32,12 @@ constants = {
     'date_headers_filename': 'postgres_date_headers.json',
 }
 
-def get_connect_str():
+def get_connect_str(database_choice):
     "Loads the secrets json file to retrieve the connection string"
     logging.info("Loading secrets from {}".format(constants['secrets_filename']))
     with open(constants['secrets_filename']) as fh:
         secrets = json.load(fh)
-    return secrets['database']['connect_str']
+    return secrets[database_choice]['connect_str']
 
 def get_column_names(path):
     with open(path) as f:
@@ -45,13 +45,13 @@ def get_column_names(path):
         headers = next(myreader)
     return headers
 
-def csv_to_sql(index_path):
+def csv_to_sql(manifest_path, database_choice):
     # Get the list of files to load - using Pandas dataframe (df)
-    paths_df = pd.read_csv(index_path, parse_dates=['date'])
+    paths_df = pd.read_csv(manifest_path, parse_dates=['date'])
     logging.info("Preparing to load " + str(len(paths_df.index)) + " files")
 
     # Connect to SQL - uses sqlalchemy so that we can write from pandas dataframe.
-    connect_str = get_connect_str()
+    connect_str = get_connect_str(database_choice)
     engine = create_engine(connect_str)
 
     for index, row in paths_df.iterrows():
@@ -71,7 +71,18 @@ def csv_to_sql(index_path):
             to_parse = list(set(parseable_headers) & set(headers))
             logging.info("  identified date columns: " + str(to_parse))
 
-            csv_df = pd.read_csv(full_path, encoding="latin1", parse_dates=to_parse) #If we have null dates that are non-blank (coded nulls), need to use this: date_parser=parser #parser = lambda x: pd.to_datetime(x, format='%m/%d/%Y', errors='coerce')
+            ###
+            #Load the data into memory
+            ###
+            #This is the same as the default parser, but missing values are null instead of throwing an error.
+                #infer_datetime_format is used to speed up loading if you expect all dates to be in the same format
+            parser = lambda x: pd.to_datetime(x, errors='coerce', infer_datetime_format=True)
+
+            #When loading, force all our columns names to follow SQL conventions of case and characters to ease queries.
+            csv_df = pd.read_csv(full_path, encoding="latin1", parse_dates=to_parse, date_parser=parser) #If we have null dates that are non-blank (coded nulls), need to use this: date_parser=parser #parser = lambda x: pd.to_datetime(x, format='%m/%d/%Y', errors='coerce')
+            csv_df.columns = map(str.lower, csv_df.columns)
+            csv_df.columns = [c.replace(' ', '_') for c in csv_df.columns]
+            csv_df.columns = [c.replace('.', '_') for c in csv_df.columns]
             logging.info("  in memory...")
 
             #Add a column so that we can put all the snapshots in the same table
@@ -81,5 +92,5 @@ def csv_to_sql(index_path):
 
 if __name__ == '__main__':
     #sample_add_to_database()
-    csv_to_sql(constants['manifest_filename'])
+    csv_to_sql(constants['manifest_filename'], 'database')
     #access_to_sql()
