@@ -60,16 +60,16 @@ def csv_to_sql(manifest_path, database_choice):
     # Connect to SQL - uses sqlalchemy so that we can write from pandas dataframe.
     connect_str = get_connect_str(database_choice)
     engine = create_engine(connect_str)
-    
+
 
     for index, row in paths_df.iterrows():
-        if row['skip'] == "skip":
+        if (row['skip'] == "skip") or (row['skip'] == "loaded") or (row['skip'] == "invalid"):
             logging.info("skipping table " + str(row['snapshot_id']))
         else:
             full_path = row['path'] + row['filename']
             tablename = row['table_name']
 
-            logging.info("loading table " + str(index + 1) + " (" + tablename + ")")
+            logging.info("loading table " + str(index + 1) + " (" + tablename + ": "+ row['snapshot_id'] + ")")
 
             #Since different files have different date columns, we need to compare to the master list.
             headers = list(get_column_names(full_path))

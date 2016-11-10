@@ -7,7 +7,7 @@ import pandas as pd
 
 
 #Get our data from the CSV export. TODO -we can later switch this to run the SQL queries directly.
-decisions_path = "summary_outputs/sample_decisions.csv"
+decisions_path = "summary_outputs/earliest100_decisions.csv"
 decisions_df = pd.read_csv(decisions_path, encoding="utf8")
 
 source = ColumnDataSource(data = decisions_df)
@@ -16,7 +16,7 @@ snapshots = decisions_df.snapshot_id.unique().tolist()
 snapshots.sort()
 
 # Start making the plot
-output_file('decisions_graph.html')
+output_file('earliest100_graph.html')
 
 # Colors are red, green, gray, and blue, mapping to the factors list in the same order
 colors = ['#CD5C5C','#C0D9AF', '#d3d3d3', '#0099CC']

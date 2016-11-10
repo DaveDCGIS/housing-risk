@@ -1,65 +1,88 @@
 skip,snapshot_id,table_name,date,path,filename,notes
-run,c2005-07,contracts,7/1/2005,../data/section8/contracts_database/urban_institute/2005-07/,MF_Assistance_&_Sec8_Contracts.txt,none
-run,c2006-04,contracts,4/1/2006,../data/section8/contracts_database/urban_institute/2006-04/,MF_Assistance_&_Sec8_Contracts.txt,none
-run,c2006-05,contracts,5/1/2006,../data/section8/contracts_database/urban_institute/2006-05/,MF_Assistance_&_Sec8_Contracts.txt,none
-run,c2008-03,contracts,3/1/2008,../data/section8/contracts_database/urban_institute/2008-03/,MF_Assistance_&_Sec8_Contracts.txt,none
-run,c2015-04,contracts,4/1/2015,../data/section8/contracts_database/urban_institute/2015-04/,MF_Assistance_&_Sec8_Contracts.txt,none
-run,c2003-06,contracts,6/1/2003,../data/section8/contracts_database/urban_institute/2003-06/,MF_Assistance___Sec8_Contracts.txt,none
-run,c2005-01,contracts,1/1/2005,../data/section8/contracts_database/urban_institute/2005-01/,MF_Assistance___Sec8_Contracts.txt,none
-run,c2005-05,contracts,5/1/2005,../data/section8/contracts_database/urban_institute/2005-05/,MF_Assistance___Sec8_Contracts.txt,none
-skip,c2006-02,contracts,2/1/2006,../data/section8/contracts_database/urban_institute/2006-02/,MF_Assistance___Sec8_Contracts.txt,none
-run,c2006-07,contracts,7/1/2006,../data/section8/contracts_database/urban_institute/2006-07/,MF_Assistance___Sec8_Contracts.txt,none
-run,c2006-09,contracts,9/1/2006,../data/section8/contracts_database/urban_institute/2006-09/,MF_Assistance___Sec8_Contracts.txt,none
-run,c2007-01,contracts,1/1/2007,../data/section8/contracts_database/urban_institute/2007-01/,MF_Assistance___Sec8_Contracts.txt,none
-run,c2007-02,contracts,2/1/2007,../data/section8/contracts_database/urban_institute/2007-02/,MF_Assistance___Sec8_Contracts.txt,none
-run,c2007-07,contracts,7/1/2007,../data/section8/contracts_database/urban_institute/2007-07/,MF_Assistance___Sec8_Contracts.txt,none
-skip,c2007-09,contracts,9/1/2007,../data/section8/contracts_database/urban_institute/2007-09/,MF_Assistance___Sec8_Contracts.txt,none
-run,c2007-12,contracts,12/1/2007,../data/section8/contracts_database/urban_institute/2007-12/,MF_Assistance___Sec8_Contracts.txt,none
-run,c2013-09,contracts,9/1/2013,../data/section8/contracts_database/urban_institute/2013-09/,MF_Assistance___Sec8_Contracts.txt,none
-run,c2014-10,contracts,10/1/2014,../data/section8/contracts_database/urban_institute/2014-10/,MF_Assistance___Sec8_Contracts.txt,none
-run,c2014-11,contracts,11/1/2014,../data/section8/contracts_database/urban_institute/2014-11/,MF_Assistance___Sec8_Contracts.txt,none
-skip,c2015-03,contracts,3/1/2015,../data/section8/contracts_database/urban_institute/2015-03/,MF_Assistance___Sec8_Contracts.txt,none
-run,c2015-05,contracts,5/1/2015,../data/section8/contracts_database/urban_institute/2015-05/,MF_Assistance___Sec8_Contracts.txt,none
-run,c2015-08,contracts,8/1/2015,../data/section8/contracts_database/urban_institute/2015-08/,MF_Assistance___Sec8_Contracts.txt,none
-run,c2015-10,contracts,10/1/2015,../data/section8/contracts_database/urban_institute/2015-10/,MF_Assistance___Sec8_Contracts.txt,none
-run,c2015-11,contracts,11/1/2015,../data/section8/contracts_database/urban_institute/2015-11/,MF_Assistance___Sec8_Contracts.txt,none
-skip,c2015-12,contracts,12/1/2015,../data/section8/contracts_database/urban_institute/2015-12/,MF_Assistance___Sec8_Contracts.txt,none
-run,c2016-01,contracts,1/1/2016,../data/section8/contracts_database/urban_institute/2016-01/,MF_Assistance___Sec8_Contracts.txt,none
-run,c2016-04,contracts,4/1/2016,../data/section8/contracts_database/urban_institute/2016-04/,MF_Assistance___Sec8_Contracts.txt,none
-run,c2016-05,contracts,5/1/2016,../data/section8/contracts_database/urban_institute/2016-05/,MF_Assistance___Sec8_Contracts.txt,nan error in dates field
-run,c2016-08,contracts,8/1/2016,../data/section8/contracts_database/urban_institute/2016-08/,MF_Assistance___Sec8_Contracts.txt,nan error in dates field
-run,p2005-07,properties,7/1/2005,../data/section8/contracts_database/urban_institute/2005-07/,MF_Properties_with_Assistance_&_Sec8_Contracts.txt,none
-run,p2006-04,properties,4/1/2006,../data/section8/contracts_database/urban_institute/2006-04/,MF_Properties_with_Assistance_&_Sec8_Contracts.txt,none
-run,p2006-05,properties,5/1/2006,../data/section8/contracts_database/urban_institute/2006-05/,MF_Properties_with_Assistance_&_Sec8_Contracts.txt,none
-run,p2008-03,properties,3/1/2008,../data/section8/contracts_database/urban_institute/2008-03/,MF_Properties_with_Assistance_&_Sec8_Contracts.txt,none
-run,p2015-04,properties,4/1/2015,../data/section8/contracts_database/urban_institute/2015-04/,MF_Properties_with_Assistance_&_Sec8_Contracts.txt,none
-run,p2003-06,properties,6/1/2003,../data/section8/contracts_database/urban_institute/2003-06/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
-run,p2005-01,properties,1/1/2005,../data/section8/contracts_database/urban_institute/2005-01/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
-run,p2005-05,properties,5/1/2005,../data/section8/contracts_database/urban_institute/2005-05/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
-skip,p2006-02,properties,2/1/2006,../data/section8/contracts_database/urban_institute/2006-02/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
-run,p2006-07,properties,7/1/2006,../data/section8/contracts_database/urban_institute/2006-07/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
-run,p2006-09,properties,9/1/2006,../data/section8/contracts_database/urban_institute/2006-09/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
-run,p2007-01,properties,1/1/2007,../data/section8/contracts_database/urban_institute/2007-01/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
-run,p2007-02,properties,2/1/2007,../data/section8/contracts_database/urban_institute/2007-02/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
-run,p2007-07,properties,7/1/2007,../data/section8/contracts_database/urban_institute/2007-07/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
-skip,p2007-09,properties,9/1/2007,../data/section8/contracts_database/urban_institute/2007-09/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
-run,p2007-12,properties,12/1/2007,../data/section8/contracts_database/urban_institute/2007-12/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
-run,p2013-09,properties,9/1/2013,../data/section8/contracts_database/urban_institute/2013-09/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
-run,p2014-10,properties,10/1/2014,../data/section8/contracts_database/urban_institute/2014-10/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
-run,p2014-11,properties,11/1/2014,../data/section8/contracts_database/urban_institute/2014-11/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
-skip,p2015-03,properties,3/1/2015,../data/section8/contracts_database/urban_institute/2015-03/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
-run,p2015-05,properties,5/1/2015,../data/section8/contracts_database/urban_institute/2015-05/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
-run,p2015-08,properties,8/1/2015,../data/section8/contracts_database/urban_institute/2015-08/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
-run,p2015-10,properties,10/1/2015,../data/section8/contracts_database/urban_institute/2015-10/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
-run,p2015-11,properties,11/1/2015,../data/section8/contracts_database/urban_institute/2015-11/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
-skip,p2015-12,properties,12/1/2015,../data/section8/contracts_database/urban_institute/2015-12/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
-run,p2016-01,properties,1/1/2016,../data/section8/contracts_database/urban_institute/2016-01/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
-run,p2016-04,properties,4/1/2016,../data/section8/contracts_database/urban_institute/2016-04/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
-run,p2016-05,properties,5/1/2016,../data/section8/contracts_database/urban_institute/2016-05/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
-run,p2016-08,properties,8/1/2016,../data/section8/contracts_database/urban_institute/2016-08/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
-skip,,,,../data/section8/contracts_database/internetArchive/,properties_2011-09-22.csv,none
-skip,,,,../data/section8/contracts_database/internetArchive/,properties_2015-09-05.csv,none
-skip,,,,../data/section8/contracts_database/main-website/,properties_2016-08-02.csv,none
-skip,,,,../data/section8/contracts_database/internetArchive/,sec8contracts_2011-09-22.csv,none
-skip,,,,../data/section8/contracts_database/internetArchive/,sec8contracts_2015-09-05.csv,none
-skip,,,,../data/section8/contracts_database/main-website/,sec8contracts_2016-08-02.csv,none
+skip,_starting_urban_institute_copies_,,,,,
+loaded,c2005-07,contracts,7/1/2005,../data/section8/contracts_database/urban_institute/2005-07/,MF_Assistance_&_Sec8_Contracts.txt,none
+loaded,c2006-04,contracts,4/1/2006,../data/section8/contracts_database/urban_institute/2006-04/,MF_Assistance_&_Sec8_Contracts.txt,none
+loaded,c2006-05,contracts,5/1/2006,../data/section8/contracts_database/urban_institute/2006-05/,MF_Assistance_&_Sec8_Contracts.txt,none
+loaded,c2008-03,contracts,3/1/2008,../data/section8/contracts_database/urban_institute/2008-03/,MF_Assistance_&_Sec8_Contracts.txt,none
+loaded,c2015-04,contracts,4/1/2015,../data/section8/contracts_database/urban_institute/2015-04/,MF_Assistance_&_Sec8_Contracts.txt,none
+skip,c2003-06,contracts,6/1/2003,../data/section8/contracts_database/urban_institute/2003-06/,MF_Assistance___Sec8_Contracts.txt,matching properties file has invalid data
+loaded,c2005-01,contracts,1/1/2005,../data/section8/contracts_database/urban_institute/2005-01/,MF_Assistance___Sec8_Contracts.txt,none
+loaded,c2005-05,contracts,5/1/2005,../data/section8/contracts_database/urban_institute/2005-05/,MF_Assistance___Sec8_Contracts.txt,none
+loaded,c2006-02,contracts,2/1/2006,../data/section8/contracts_database/urban_institute/2006-02/,MF_Assistance___Sec8_Contracts.txt,none
+loaded,c2006-07,contracts,7/1/2006,../data/section8/contracts_database/urban_institute/2006-07/,MF_Assistance___Sec8_Contracts.txt,none
+loaded,c2006-09,contracts,9/1/2006,../data/section8/contracts_database/urban_institute/2006-09/,MF_Assistance___Sec8_Contracts.txt,none
+loaded,c2007-01,contracts,1/1/2007,../data/section8/contracts_database/urban_institute/2007-01/,MF_Assistance___Sec8_Contracts.txt,none
+loaded,c2007-02,contracts,2/1/2007,../data/section8/contracts_database/urban_institute/2007-02/,MF_Assistance___Sec8_Contracts.txt,none
+loaded,c2007-07,contracts,7/1/2007,../data/section8/contracts_database/urban_institute/2007-07/,MF_Assistance___Sec8_Contracts.txt,none
+loaded,c2007-09,contracts,9/1/2007,../data/section8/contracts_database/urban_institute/2007-09/,MF_Assistance___Sec8_Contracts.txt,none
+loaded,c2007-12,contracts,12/1/2007,../data/section8/contracts_database/urban_institute/2007-12/,MF_Assistance___Sec8_Contracts.txt,none
+loaded,c2013-09,contracts,9/1/2013,../data/section8/contracts_database/urban_institute/2013-09/,MF_Assistance___Sec8_Contracts.txt,none
+loaded,c2014-10,contracts,10/1/2014,../data/section8/contracts_database/urban_institute/2014-10/,MF_Assistance___Sec8_Contracts.txt,none
+loaded,c2014-11,contracts,11/1/2014,../data/section8/contracts_database/urban_institute/2014-11/,MF_Assistance___Sec8_Contracts.txt,none
+loaded,c2015-03,contracts,3/1/2015,../data/section8/contracts_database/urban_institute/2015-03/,MF_Assistance___Sec8_Contracts.txt,none
+loaded,c2015-05,contracts,5/1/2015,../data/section8/contracts_database/urban_institute/2015-05/,MF_Assistance___Sec8_Contracts.txt,none
+loaded,c2015-08,contracts,8/1/2015,../data/section8/contracts_database/urban_institute/2015-08/,MF_Assistance___Sec8_Contracts.txt,none
+loaded,c2015-10,contracts,10/1/2015,../data/section8/contracts_database/urban_institute/2015-10/,MF_Assistance___Sec8_Contracts.txt,none
+loaded,c2015-11,contracts,11/1/2015,../data/section8/contracts_database/urban_institute/2015-11/,MF_Assistance___Sec8_Contracts.txt,none
+loaded,c2015-12,contracts,12/1/2015,../data/section8/contracts_database/urban_institute/2015-12/,MF_Assistance___Sec8_Contracts.txt,none
+loaded,c2016-01,contracts,1/1/2016,../data/section8/contracts_database/urban_institute/2016-01/,MF_Assistance___Sec8_Contracts.txt,none
+loaded,c2016-04,contracts,4/1/2016,../data/section8/contracts_database/urban_institute/2016-04/,MF_Assistance___Sec8_Contracts.txt,none
+loaded,c2016-05,contracts,5/1/2016,../data/section8/contracts_database/urban_institute/2016-05/,MF_Assistance___Sec8_Contracts.txt,none
+loaded,c2016-08,contracts,8/1/2016,../data/section8/contracts_database/urban_institute/2016-08/,MF_Assistance___Sec8_Contracts.txt,none
+loaded,p2005-07,properties,7/1/2005,../data/section8/contracts_database/urban_institute/2005-07/,MF_Properties_with_Assistance_&_Sec8_Contracts.txt,none
+loaded,p2006-04,properties,4/1/2006,../data/section8/contracts_database/urban_institute/2006-04/,MF_Properties_with_Assistance_&_Sec8_Contracts.txt,none
+loaded,p2006-05,properties,5/1/2006,../data/section8/contracts_database/urban_institute/2006-05/,MF_Properties_with_Assistance_&_Sec8_Contracts.txt,none
+loaded,p2008-03,properties,3/1/2008,../data/section8/contracts_database/urban_institute/2008-03/,MF_Properties_with_Assistance_&_Sec8_Contracts.txt,none
+loaded,p2015-04,properties,4/1/2015,../data/section8/contracts_database/urban_institute/2015-04/,MF_Properties_with_Assistance_&_Sec8_Contracts.txt,none
+invalid,p2003-06,properties,6/1/2003,../data/section8/contracts_database/urban_institute/2003-06/,MF_Properties_with_Assistance___Sec8_Contracts.txt,"Invalid data - encoding, column numbers, etc (unclear)"
+loaded,p2005-01,properties,1/1/2005,../data/section8/contracts_database/urban_institute/2005-01/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
+loaded,p2005-05,properties,5/1/2005,../data/section8/contracts_database/urban_institute/2005-05/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
+loaded,p2006-02,properties,2/1/2006,../data/section8/contracts_database/urban_institute/2006-02/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
+loaded,p2006-07,properties,7/1/2006,../data/section8/contracts_database/urban_institute/2006-07/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
+loaded,p2006-09,properties,9/1/2006,../data/section8/contracts_database/urban_institute/2006-09/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
+loaded,p2007-01,properties,1/1/2007,../data/section8/contracts_database/urban_institute/2007-01/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
+loaded,p2007-02,properties,2/1/2007,../data/section8/contracts_database/urban_institute/2007-02/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
+loaded,p2007-07,properties,7/1/2007,../data/section8/contracts_database/urban_institute/2007-07/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
+loaded,p2007-09,properties,9/1/2007,../data/section8/contracts_database/urban_institute/2007-09/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
+loaded,p2007-12,properties,12/1/2007,../data/section8/contracts_database/urban_institute/2007-12/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
+loaded,p2013-09,properties,9/1/2013,../data/section8/contracts_database/urban_institute/2013-09/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
+loaded,p2014-10,properties,10/1/2014,../data/section8/contracts_database/urban_institute/2014-10/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
+loaded,p2014-11,properties,11/1/2014,../data/section8/contracts_database/urban_institute/2014-11/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
+loaded,p2015-03,properties,3/1/2015,../data/section8/contracts_database/urban_institute/2015-03/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
+loaded,p2015-05,properties,5/1/2015,../data/section8/contracts_database/urban_institute/2015-05/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
+loaded,p2015-08,properties,8/1/2015,../data/section8/contracts_database/urban_institute/2015-08/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
+loaded,p2015-10,properties,10/1/2015,../data/section8/contracts_database/urban_institute/2015-10/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
+loaded,p2015-11,properties,11/1/2015,../data/section8/contracts_database/urban_institute/2015-11/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
+loaded,p2015-12,properties,12/1/2015,../data/section8/contracts_database/urban_institute/2015-12/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
+loaded,p2016-01,properties,1/1/2016,../data/section8/contracts_database/urban_institute/2016-01/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
+loaded,p2016-04,properties,4/1/2016,../data/section8/contracts_database/urban_institute/2016-04/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
+loaded,p2016-05,properties,5/1/2016,../data/section8/contracts_database/urban_institute/2016-05/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
+loaded,p2016-08,properties,8/1/2016,../data/section8/contracts_database/urban_institute/2016-08/,MF_Properties_with_Assistance___Sec8_Contracts.txt,none
+skip,_starting_downloaded_copies_,,,,,
+loaded,c2016-08,contracts,8/2/2016,../data/section8/contracts_database/main-website/,sec8contracts_2016-08-02.csv,none
+loaded,p2016-08,properties,8/2/2016,../data/section8/contracts_database/main-website/,properties_2016-08-02.csv,none
+loaded,c2016-09,contracts,9/29/2016,../data/section8/contracts_database/main-website/,contracts_2016-09-29.csv,
+loaded,p2016-09,properties,9/29/2016,../data/section8/contracts_database/main-website/,properties_2016-09-29.csv,
+skip,_starting_internet_archive_copies_,,,,,
+loaded,c2011-09,contracts,9/22/2011,../data/section8/contracts_database/internetArchive/2011-09-22/,sec8contracts_2011-09-22.csv,none
+loaded,c2015-09,contracts,9/5/2015,../data/section8/contracts_database/internetArchive/2015-09-05/,sec8contracts_2015-09-05.csv,none
+loaded,p2011-09,properties,9/22/2011,../data/section8/contracts_database/internetArchive/2011-09-22/,properties_2011-09-22.csv,none
+loaded,p2015-09,properties,9/5/2015,../data/section8/contracts_database/internetArchive/2015-09-05/,properties_2015-09-05.csv,none
+skip,_internet_archive_contracts,,,,,
+loaded,c2012-12,contracts,12/14/2012,../data/section8/contracts_database/internetArchive/2012-12-14/,contracts_2012-12-14.csv,date modified is 05/16/2014
+loaded,c2012-03,contracts,3/27/2012,../data/section8/contracts_database/internetArchive/2012-03-27/,contracts_2012-03-27.csv,date modified is 05/16/2014
+loaded,c2009-11,contracts,11/20/2009,../data/section8/contracts_database/internetArchive/2009-11-20/,contracts_2009-11-20.csv,date modified is 05/16/2014
+loaded,c2009-02,contracts,2/17/2009,../data/section8/contracts_database/internetArchive/2009-02-17/,contracts_2009-02-17.csv,date modified is 05/12/2009
+skip,c2003-05,contracts,5/3/2003,../data/section8/contracts_database/internetArchive/2003-05-03/,contracts_2003-05-03.csv,date modified is 01/05/2003
+skip,c2003-01,contracts,1/5/2003,../data/section8/contracts_database/internetArchive/2003-01-05/,contracts_2003-01-05.csv,date modified is 01/05/2003
+skip,c2002-08,contracts,8/30/2002,../data/section8/contracts_database/internetArchive/2002-08-30/,contracts_2002-08-30.csv,date modified is 9/3/2002
+skip,c2001-11,contracts,11/27/2001,../data/section8/contracts_database/internetArchive/2001-11-27/,contracts_2001-11-27.csv,date modified is 11/27/2001
+skip,c_internet_archive_properties,,,,,
+,p2012-12,properties,12/14/2012,../data/section8/contracts_database/internetArchive/2012-12-14/,properties_2012-12-14.csv,date modified is 05/16/2014
+,p2012-03,properties,3/27/2012,../data/section8/contracts_database/internetArchive/2012-03-27/,properties_2012-03-27.csv,date modified is 05/16/2014
+,p2009-11,properties,11/20/2009,../data/section8/contracts_database/internetArchive/2009-11-20/,properties_2009-11-20.csv,date modified is 05/16/2014
+,p2009-02,properties,2/17/2009,../data/section8/contracts_database/internetArchive/2009-02-17/,properties_2009-02-17.csv,date modified is 05/12/2009
+skip,p2003-05,properties,5/3/2003,../data/section8/contracts_database/internetArchive/2003-05-03/,properties_2003-05-03.csv,date modified is 01/05/2003
+skip,p2003-01,properties,1/5/2003,../data/section8/contracts_database/internetArchive/2003-01-05/,properties_2003-01-05.csv,date modified is 01/05/2003
+skip,p2002-08,properties,8/30/2002,../data/section8/contracts_database/internetArchive/2002-08-30/,properties_2002-08-30.csv,date modified is 9/3/2002
+skip,p2001-11,properties,11/27/2001,../data/section8/contracts_database/internetArchive/2001-11-27/,properties_2001-11-27.csv,date modified is 11/27/2001
