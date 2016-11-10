@@ -64,25 +64,25 @@ loaded,p2016-08,properties,8/2/2016,../data/section8/contracts_database/main-web
 loaded,c2016-09,contracts,9/29/2016,../data/section8/contracts_database/main-website/,contracts_2016-09-29.csv,
 loaded,p2016-09,properties,9/29/2016,../data/section8/contracts_database/main-website/,properties_2016-09-29.csv,
 skip,_starting_internet_archive_copies_,,,,,
-,c2011-09,contracts,9/22/2011,../data/section8/contracts_database/internetArchive/2011-09-22/,sec8contracts_2011-09-22.csv,none
-,c2015-09,contracts,9/5/2015,../data/section8/contracts_database/internetArchive/2015-09-05/,sec8contracts_2015-09-05.csv,none
-,p2011-09,properties,9/22/2011,../data/section8/contracts_database/internetArchive/2011-09-22/,properties_2011-09-22.csv,none
-,p2015-09,properties,9/5/2015,../data/section8/contracts_database/internetArchive/2015-09-05/,properties_2015-09-05.csv,none
+loaded,c2011-09,contracts,9/22/2011,../data/section8/contracts_database/internetArchive/2011-09-22/,sec8contracts_2011-09-22.csv,none
+loaded,c2015-09,contracts,9/5/2015,../data/section8/contracts_database/internetArchive/2015-09-05/,sec8contracts_2015-09-05.csv,none
+loaded,p2011-09,properties,9/22/2011,../data/section8/contracts_database/internetArchive/2011-09-22/,properties_2011-09-22.csv,none
+loaded,p2015-09,properties,9/5/2015,../data/section8/contracts_database/internetArchive/2015-09-05/,properties_2015-09-05.csv,none
 skip,_internet_archive_contracts,,,,,
-,c2012-12,contracts,12/14/2012,../data/section8/contracts_database/internetArchive/2012-12-14/,contracts_2012-12-14,date modified is 05/16/2014
-,c2012-03,contracts,3/27/2012,../data/section8/contracts_database/internetArchive/2012-03-27/,contracts_2012-03-27,date modified is 05/16/2014
-,c2009-11,contracts,11/20/2009,../data/section8/contracts_database/internetArchive/2009-11-20/,contracts_2009-11-20,date modified is 05/16/2014
-,c2009-02,contracts,2/17/2009,../data/section8/contracts_database/internetArchive/2009-02-17/,contracts_2009-02-17,date modified is 05/12/2009
-,c2003-05,contracts,5/3/2003,../data/section8/contracts_database/internetArchive/2003-05-03/,contracts_2003-05-03,date modified is 01/05/2003
-,c2003-01,contracts,1/5/2003,../data/section8/contracts_database/internetArchive/2003-01-05/,contracts_2003-01-05,date modified is 01/05/2003
-,c2002-08,contracts,8/30/2002,../data/section8/contracts_database/internetArchive/2002-08-30/,contracts_2002-08-30,date modified is 9/3/2002
-,c2001-11,contracts,11/27/2001,../data/section8/contracts_database/internetArchive/2001-11-27/,contracts_2001-11-27,date modified is 11/27/2001
+loaded,c2012-12,contracts,12/14/2012,../data/section8/contracts_database/internetArchive/2012-12-14/,contracts_2012-12-14.csv,date modified is 05/16/2014
+loaded,c2012-03,contracts,3/27/2012,../data/section8/contracts_database/internetArchive/2012-03-27/,contracts_2012-03-27.csv,date modified is 05/16/2014
+loaded,c2009-11,contracts,11/20/2009,../data/section8/contracts_database/internetArchive/2009-11-20/,contracts_2009-11-20.csv,date modified is 05/16/2014
+loaded,c2009-02,contracts,2/17/2009,../data/section8/contracts_database/internetArchive/2009-02-17/,contracts_2009-02-17.csv,date modified is 05/12/2009
+skip,c2003-05,contracts,5/3/2003,../data/section8/contracts_database/internetArchive/2003-05-03/,contracts_2003-05-03.csv,date modified is 01/05/2003
+skip,c2003-01,contracts,1/5/2003,../data/section8/contracts_database/internetArchive/2003-01-05/,contracts_2003-01-05.csv,date modified is 01/05/2003
+skip,c2002-08,contracts,8/30/2002,../data/section8/contracts_database/internetArchive/2002-08-30/,contracts_2002-08-30.csv,date modified is 9/3/2002
+skip,c2001-11,contracts,11/27/2001,../data/section8/contracts_database/internetArchive/2001-11-27/,contracts_2001-11-27.csv,date modified is 11/27/2001
 skip,c_internet_archive_properties,,,,,
-,p2012-12,properties,12/14/2012,../data/section8/contracts_database/internetArchive/2012-12-14/,properties_2012-12-14,date modified is 05/16/2014
-,p2012-03,properties,3/27/2012,../data/section8/contracts_database/internetArchive/2012-03-27/,properties_2012-03-27,date modified is 05/16/2014
-,p2009-11,properties,11/20/2009,../data/section8/contracts_database/internetArchive/2009-11-20/,properties_2009-11-20,date modified is 05/16/2014
-,p2009-02,properties,2/17/2009,../data/section8/contracts_database/internetArchive/2009-02-17/,properties_2009-02-17,date modified is 05/12/2009
-,p2003-05,properties,5/3/2003,../data/section8/contracts_database/internetArchive/2003-05-03/,properties_2003-05-03,date modified is 01/05/2003
-,p2003-01,properties,1/5/2003,../data/section8/contracts_database/internetArchive/2003-01-05/,properties_2003-01-05,date modified is 01/05/2003
-,p2002-08,properties,8/30/2002,../data/section8/contracts_database/internetArchive/2002-08-30/,properties_2002-08-30,date modified is 9/3/2002
-,p2001-11,properties,11/27/2001,../data/section8/contracts_database/internetArchive/2001-11-27/,properties_2001-11-27,date modified is 11/27/2001
+,p2012-12,properties,12/14/2012,../data/section8/contracts_database/internetArchive/2012-12-14/,properties_2012-12-14.csv,date modified is 05/16/2014
+,p2012-03,properties,3/27/2012,../data/section8/contracts_database/internetArchive/2012-03-27/,properties_2012-03-27.csv,date modified is 05/16/2014
+,p2009-11,properties,11/20/2009,../data/section8/contracts_database/internetArchive/2009-11-20/,properties_2009-11-20.csv,date modified is 05/16/2014
+,p2009-02,properties,2/17/2009,../data/section8/contracts_database/internetArchive/2009-02-17/,properties_2009-02-17.csv,date modified is 05/12/2009
+skip,p2003-05,properties,5/3/2003,../data/section8/contracts_database/internetArchive/2003-05-03/,properties_2003-05-03.csv,date modified is 01/05/2003
+skip,p2003-01,properties,1/5/2003,../data/section8/contracts_database/internetArchive/2003-01-05/,properties_2003-01-05.csv,date modified is 01/05/2003
+skip,p2002-08,properties,8/30/2002,../data/section8/contracts_database/internetArchive/2002-08-30/,properties_2002-08-30.csv,date modified is 9/3/2002
+skip,p2001-11,properties,11/27/2001,../data/section8/contracts_database/internetArchive/2001-11-27/,properties_2001-11-27.csv,date modified is 11/27/2001
