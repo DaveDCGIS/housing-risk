@@ -114,6 +114,7 @@ The DC-only Preservation Catalog, which compiles various HUD data sources. We ca
 Expected to be our primary data set. We will need historical copies of this data set from each year. Currently these are coming from a few different places.
 * `main-website` - data from the HUD website, current as of 8/2/2016 (updated monthly). from here: http://portal.hud.gov/hudportal/HUD?src=/program_offices/housing/mfh/exp/mfhdiscl
 * `internetArchive` - Old versions of that same page, from the Wayback Machine Internet Archive.
+	* This is the web page before they overhauled their site in 2011: http://www.hud.gov/offices/hsg/mfh/exp/mfhdiscl.cfm
 * `urban_institute` - Urban Institute has saved copies every time they download the contracts database. This is our **primary** data source
   * zip file of the original dump from Urban includes zipped or self extracting Access databases, Urban's dump to CSV files (named.txt), and data dictionaries as of the time of the original download.
   * Zip of just the source Access databases, renamed to match their download date.
