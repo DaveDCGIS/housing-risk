@@ -78,11 +78,29 @@ skip,c2003-01,contracts,1/5/2003,../data/section8/contracts_database/internetArc
 skip,c2002-08,contracts,8/30/2002,../data/section8/contracts_database/internetArchive/2002-08-30/,contracts_2002-08-30.csv,date modified is 9/3/2002
 skip,c2001-11,contracts,11/27/2001,../data/section8/contracts_database/internetArchive/2001-11-27/,contracts_2001-11-27.csv,date modified is 11/27/2001
 skip,c_internet_archive_properties,,,,,
-,p2012-12,properties,12/14/2012,../data/section8/contracts_database/internetArchive/2012-12-14/,properties_2012-12-14.csv,date modified is 05/16/2014
-,p2012-03,properties,3/27/2012,../data/section8/contracts_database/internetArchive/2012-03-27/,properties_2012-03-27.csv,date modified is 05/16/2014
-,p2009-11,properties,11/20/2009,../data/section8/contracts_database/internetArchive/2009-11-20/,properties_2009-11-20.csv,date modified is 05/16/2014
-,p2009-02,properties,2/17/2009,../data/section8/contracts_database/internetArchive/2009-02-17/,properties_2009-02-17.csv,date modified is 05/12/2009
+loaded,p2012-12,properties,12/14/2012,../data/section8/contracts_database/internetArchive/2012-12-14/,properties_2012-12-14.csv,date modified is 05/16/2014
+loaded,p2012-03,properties,3/27/2012,../data/section8/contracts_database/internetArchive/2012-03-27/,properties_2012-03-27.csv,date modified is 05/16/2014
+loaded,p2009-11,properties,11/20/2009,../data/section8/contracts_database/internetArchive/2009-11-20/,properties_2009-11-20.csv,date modified is 05/16/2014
+loaded,p2009-02,properties,2/17/2009,../data/section8/contracts_database/internetArchive/2009-02-17/,properties_2009-02-17.csv,date modified is 05/12/2009
 skip,p2003-05,properties,5/3/2003,../data/section8/contracts_database/internetArchive/2003-05-03/,properties_2003-05-03.csv,date modified is 01/05/2003
 skip,p2003-01,properties,1/5/2003,../data/section8/contracts_database/internetArchive/2003-01-05/,properties_2003-01-05.csv,date modified is 01/05/2003
 skip,p2002-08,properties,8/30/2002,../data/section8/contracts_database/internetArchive/2002-08-30/,properties_2002-08-30.csv,date modified is 9/3/2002
 skip,p2001-11,properties,11/27/2001,../data/section8/contracts_database/internetArchive/2001-11-27/,properties_2001-11-27.csv,date modified is 11/27/2001
+,ACS_09_5YR_B25057_with_ann.csv,acs_rent_lower,7/1/2007,../data/acs/median_rent_by_tract/2009_5year/,ACS_09_5YR_B25057_with_ann.csv,lower_quartile
+,ACS_09_5YR_B25058_with_ann.csv,acs_rent_median,7/1/2007,../data/acs/median_rent_by_tract/2009_5year/,ACS_09_5YR_B25058_with_ann.csv,median
+,ACS_09_5YR_B25059_with_ann.csv,acs_rent_upper,7/1/2007,../data/acs/median_rent_by_tract/2009_5year/,ACS_09_5YR_B25059_with_ann.csv,upper_quartile
+,ACS_10_5YR_B25057_with_ann.csv,acs_rent_lower,7/1/2008,../data/acs/median_rent_by_tract/2010_5year/,ACS_10_5YR_B25057_with_ann.csv,lower_quartile
+,ACS_10_5YR_B25058_with_ann.csv,acs_rent_median,7/1/2008,../data/acs/median_rent_by_tract/2010_5year/,ACS_10_5YR_B25058_with_ann.csv,median
+,ACS_10_5YR_B25059_with_ann.csv,acs_rent_upper,7/1/2008,../data/acs/median_rent_by_tract/2010_5year/,ACS_10_5YR_B25059_with_ann.csv,upper_quartile
+,ACS_11_5YR_B25057_with_ann.csv,acs_rent_lower,7/1/2009,../data/acs/median_rent_by_tract/2011_5year/,ACS_11_5YR_B25057_with_ann.csv,lower_quartile
+,ACS_11_5YR_B25058_with_ann.csv,acs_rent_median,7/1/2009,../data/acs/median_rent_by_tract/2011_5year/,ACS_11_5YR_B25058_with_ann.csv,median
+,ACS_11_5YR_B25059_with_ann.csv,acs_rent_upper,7/1/2009,../data/acs/median_rent_by_tract/2011_5year/,ACS_11_5YR_B25059_with_ann.csv,upper_quartile
+,ACS_12_5YR_B25057_with_ann.csv,acs_rent_lower,7/1/2010,../data/acs/median_rent_by_tract/2012_5year/,ACS_12_5YR_B25057_with_ann.csv,lower_quartile
+,ACS_12_5YR_B25058_with_ann.csv,acs_rent_median,7/1/2010,../data/acs/median_rent_by_tract/2012_5year/,ACS_12_5YR_B25058_with_ann.csv,median
+,ACS_12_5YR_B25059_with_ann.csv,acs_rent_upper,7/1/2010,../data/acs/median_rent_by_tract/2012_5year/,ACS_12_5YR_B25059_with_ann.csv,upper_quartile
+,ACS_13_5YR_B25057_with_ann.csv,acs_rent_lower,7/1/2011,../data/acs/median_rent_by_tract/2013_5year/,ACS_13_5YR_B25057_with_ann.csv,lower_quartile
+,ACS_13_5YR_B25058_with_ann.csv,acs_rent_median,7/1/2011,../data/acs/median_rent_by_tract/2013_5year/,ACS_13_5YR_B25058_with_ann.csv,median
+,ACS_13_5YR_B25059_with_ann.csv,acs_rent_upper,7/1/2011,../data/acs/median_rent_by_tract/2013_5year/,ACS_13_5YR_B25059_with_ann.csv,upper_quartile
+,ACS_14_5YR_B25057_with_ann.csv,acs_rent_lower,7/1/2012,../data/acs/median_rent_by_tract/2014_5year/,ACS_14_5YR_B25057_with_ann.csv,lower_quartile
+,ACS_14_5YR_B25058_with_ann.csv,acs_rent_median,7/1/2012,../data/acs/median_rent_by_tract/2014_5year/,ACS_14_5YR_B25058_with_ann.csv,median
+,ACS_14_5YR_B25059_with_ann.csv,acs_rent_upper,7/1/2012,../data/acs/median_rent_by_tract/2014_5year/,ACS_14_5YR_B25059_with_ann.csv,upper_quartile
