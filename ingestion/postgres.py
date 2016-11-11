@@ -32,12 +32,17 @@ constants = {
     'date_headers_filename': 'postgres_date_headers.json',
 }
 
+
 def get_connect_str(database_choice):
-    "Loads the secrets json file to retrieve the connection string"
+    #test_var='{"database": {"connect_str" : "postgresql://postgres:admin:@localhost:5433/huddb"}}'
+    #print(test_var[75])
+    #print(char("{"database": {"connect_str" : "postgresql://postgres:admin:@localhost:5433/huddb"}}",94))
+    #"Loads the secrets json file to retrieve the connection string"
     logging.info("Loading secrets from {}".format(constants['secrets_filename']))
-    with open(constants['secrets_filename']) as fh:
-        secrets = json.load(fh)
-    return secrets[database_choice]['connect_str']
+    #with open(constants['secrets_filename']) as fh:
+      #  secrets = json.load(fh)
+    #return secrets[database_choice]['connect_str']
+    return "postgresql://postgres:admin:@localhost:5433/huddb"
 
 def get_column_names(path):
     with open(path) as f:
