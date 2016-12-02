@@ -24,16 +24,16 @@ class ManyModels:
         self.answers = pandas.DataFrame() #Pandas dataframe where each row is a row of the test dataset, each column is a different model_list
         self.scores = pandas.DataFrame()
 
-        self.testing = "testing"
+        self._X_test = None
 
     #Need to set the X_test data set universally, so that rows of self.answers will match
     def _setX_test(self, X_test=None):
-        self.X_test = X_test
+        self._X_test = X_test
         #reset since rows will no longer match
         self.answers = pandas.DataFrame()
         self.scores = pandas.DataFrame()
     def _getX_test(self):
-        return self.X_test
+        return self._X_test
     X_test = property(_getX_test, _setX_test)
 
     def fit(self, model_list=None):
