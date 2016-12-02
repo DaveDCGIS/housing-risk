@@ -91,6 +91,15 @@ def csv_to_sql(manifest_path, database_choice):
             csv_df.columns = map(str.lower, csv_df.columns)
             csv_df.columns = [c.replace(' ', '_') for c in csv_df.columns]
             csv_df.columns = [c.replace('.', '_') for c in csv_df.columns]
+
+            #Force fields with $ from text to numeric
+            currency_fields = ['0br_fmr','1br_fmr','2br_fmr','3br_fmr','4br_fmr']
+            if set(currency_fields).issubset(csv_df.columns):
+                logging.info("  found currency fields: " + str(currency_fields))
+                for fieldname in currency_fields:
+                    csv_df[fieldname].replace(to_replace='[\$,)]',value='', inplace=True, regex=True )
+                    csv_df[fieldname] = pd.to_numeric(csv_df[fieldname])
+
             logging.info("  in memory...")
 
             #Add a column so that we can put all the snapshots in the same table
