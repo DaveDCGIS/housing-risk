@@ -3,10 +3,6 @@ print("importing train_models...")
 import numpy, pandas
 from sklearn import metrics
 
-
-#Temporary method - initialize models we want to use
-
-
 class ManyModels:
     '''
     A wrapper class for training multiple sklearn models on a single dataset
@@ -53,7 +49,6 @@ class ManyModels:
         self.scores = {}
 
     def fit(self, model_list=None):
-
         model_list = self.clean_model_list(model_list)
 
         for key in model_list:
