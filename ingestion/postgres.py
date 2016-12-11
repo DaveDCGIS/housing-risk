@@ -63,10 +63,27 @@ def csv_to_sql(manifest_path, database_choice):
 
 
     for index, row in paths_df.iterrows():
-        if (row['skip'] == "skip") or (row['skip'] == "loaded") or (row['skip'] == "invalid"):
+        #Decide whether to load the row
+        load_row = False
+        if (row['skip'] == "skip") or (row['skip'] == "invalid"):
+            load_row = false
+        elif (row['skip'] == "loaded"):
+            #TODO check the manifest in the database to see if the local database agrees
+            pass
+            load_row = False
+        else:
+            load_row =True
+
+        if load_row == False:
             logging.info("skipping table " + str(row['snapshot_id']))
         else:
-            full_path = row['path'] + row['filename']
+            full_path = row['local_folder'] + row['subpath'] + row['filename']
+            #TODO Check if full_path file exists
+            #else:
+            s3_path = row['s3_folder'] + row['subpath'] + row['filename']
+            #download s3_path to full_path
+            #logging.info("downloading file to disk: " + row['subpath'] + row['filename'])
+
             tablename = row['table_name']
 
             logging.info("loading table " + str(index + 1) + " (" + tablename + ": "+ row['snapshot_id'] + ")")
