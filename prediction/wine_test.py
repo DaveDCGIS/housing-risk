@@ -77,3 +77,9 @@ import pprint
 pp = pprint.PrettyPrinter()
 print("Model performance:")
 pp.pprint(modeler.scores)
+
+
+#Initializing Kfolds. This stores the actual values for the indexes of each fold in a list of tuples, each tuple having two arrays (train and test)
+modeler.make_folds(random_state=0, type="StratifiedKFold", n_splits = 12)
+train, test = modeler.folds[1] #Assigning the second set of fold indexes to variables
+print(X[test])

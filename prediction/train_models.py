@@ -2,6 +2,8 @@ print("importing train_models...")
 
 import numpy, pandas
 from sklearn import metrics
+from sklearn import model_selection
+
 
 class ManyModels:
     '''
@@ -26,6 +28,7 @@ class ManyModels:
 
         self.X_test = None
         self.y_test = None
+        self.folds = None
 
     #@property lets us add additional logic to the getters and setters for the X_test property (e.g., resetting the answers and scores)
     @property
@@ -71,6 +74,19 @@ class ManyModels:
                 self.scores[key]['f1'] = metrics.f1_score(y_true = self.y_test, y_pred=self.answers[key], average="weighted")
 
         return self.answers
+
+    def make_folds(self, random_state=0, type="StratifiedKFold", n_splits = 12):
+        if type=="StratifiedKFold":
+            fold_generator = model_selection.StratifiedKFold(n_splits = n_splits, random_state = random_state)
+        elif type=="KFold":
+            fold_generator = model_selection.KFold(n_splits = n_split, random_state = random_state)
+        else:
+            raise  ValueError("type {} not found".format(type))
+
+        #generate all the folds at once and store
+        self.folds = list(fold_generator.split(self.X, self.y))
+
+        return self.folds
 
     def clean_model_list(self, model_list):
             #Resolve defaults and turn a single string into a list
