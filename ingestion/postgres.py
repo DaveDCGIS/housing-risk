@@ -89,7 +89,7 @@ def csv_to_sql(manifest_path, database_choice):
                 s3_path = row['s3_folder'] + row['subpath'] + row['filename']
                 logging.info("  file not found. attempting to download file to disk: " + s3_path)
                 urlretrieve(s3_path,full_path)
-                logging.info("  complete. Loading table " + str(index + 1) + " (" + tablename + ": "+ row['snapshot_id'] + ")")
+                logging.info("  download complete. Loading table " + str(index + 1) + " (" + tablename + ": "+ row['snapshot_id'] + ")")
                 headers = list(get_column_names(full_path))
 
             with open(constants['date_headers_filename']) as fh:
