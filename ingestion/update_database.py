@@ -50,11 +50,12 @@ def manifest_to_sql(manifest_path, database_choice):
     paths_df = pd.read_csv(manifest_path, parse_dates=['date'])
     connect_str = get_connect_str(database_choice)
     engine = create_engine(connect_str)
-    paths_df.to_sql('manifest', engine, if_exists='replace')
+
 
 def csv_to_sql(manifest_path, database_choice):
     # Get the list of files to load - using Pandas dataframe (df)
     paths_df = pd.read_csv(manifest_path, parse_dates=['date'])
+    manifest_df_copy = paths_df #this copy will be added to the SQL manifest
     logging.info("Preparing to load " + str(len(paths_df.index)) + " files")
 
     # Connect to SQL - uses sqlalchemy so that we can write from pandas dataframe.
@@ -62,24 +63,46 @@ def csv_to_sql(manifest_path, database_choice):
     engine = create_engine(connect_str)
 
 
+
     for index, row in paths_df.iterrows():
+        print("checking: " + row['snapshot_id'])
+        #######################
         #Decide whether to load the row
+        #######################
         load_row = False
         if (row['skip'] == "skip") or (row['skip'] == "invalid"):
             load_row = False
-        elif (row['skip'] == "loaded"):
-            #TODO check the manifest in the database to see if the local database agrees
-            pass
-            load_row = False
+        #See if the table is already loaded
+        elif (row['skip'] == "use"):
+
+            database_connection = engine.connect()
+            if engine.dialect.has_table(database_connection, 'manifest'):
+                query_result = database_connection.execute("select skip from manifest where snapshot_id='{}'".format(row['snapshot_id']))
+
+                for query_row in query_result:
+                    database_skip_val = query_row['skip']
+
+                if database_skip_val == "loaded":
+                    load_row = False
+                    manifest_df_copy.set_value(index, 'skip', 'loaded') #make sure the database still says loaded for this row when we reload this procedure
+                else:
+                    load_row = True
+            else:
+                #the 'manifest' table doesn't exist, so we are probably recreating the database for the first time
+                load_row = True
+            database_connection.close()
         else:
             load_row =True
 
+        #######################
+        #Load the file from disk into the database
+        #######################
         if load_row == False:
-            logging.info("skipping table " + str(row['snapshot_id']))
+            logging.info("  skipping table")
         else:
             full_path = row['local_folder'] + row['subpath'] + row['filename']
             tablename = row['table_name']
-            logging.info("attempting to load table " + str(index + 1) + " (" + tablename + ": "+ row['snapshot_id'] + ")")
+            logging.info("  attempting to load table")
 
             #Since different files have different date columns, we need to compare to the master list.
             #Since this is the first time we use the file, try downloading it if it fails
@@ -129,8 +152,11 @@ def csv_to_sql(manifest_path, database_choice):
             csv_df.to_sql(tablename, engine, if_exists='append')
             logging.info("  table loaded into database")
 
+            manifest_df_copy.set_value(index, 'skip', 'loaded')
+
+    #Done looping rows
+    manifest_df_copy.to_sql('manifest', engine, if_exists='replace')
+
+
 if __name__ == '__main__':
-    #sample_add_to_database()
     csv_to_sql(constants['manifest_filename'], 'database')
-    manifest_to_sql(constants['manifest_filename'], 'database')
-    #access_to_sql()
