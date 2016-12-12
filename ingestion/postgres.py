@@ -15,6 +15,7 @@ import json
 import pandas as pd
 from sqlalchemy import create_engine
 import csv
+from urllib.request import urlretrieve
 
 #Configure logging. See /logs/example-logging.py for examples of how to use this.
 logging_filename = "../logs/ingestion.log"
@@ -34,7 +35,6 @@ constants = {
 
 def get_connect_str(database_choice):
     "Loads the secrets json file to retrieve the connection string"
-    logging.info("Loading secrets from {}".format(constants['secrets_filename']))
     with open(constants['secrets_filename']) as fh:
         secrets = json.load(fh)
     return secrets[database_choice]['connect_str']
@@ -66,7 +66,7 @@ def csv_to_sql(manifest_path, database_choice):
         #Decide whether to load the row
         load_row = False
         if (row['skip'] == "skip") or (row['skip'] == "invalid"):
-            load_row = false
+            load_row = False
         elif (row['skip'] == "loaded"):
             #TODO check the manifest in the database to see if the local database agrees
             pass
@@ -78,23 +78,25 @@ def csv_to_sql(manifest_path, database_choice):
             logging.info("skipping table " + str(row['snapshot_id']))
         else:
             full_path = row['local_folder'] + row['subpath'] + row['filename']
-            #TODO Check if full_path file exists
-            #else:
-            s3_path = row['s3_folder'] + row['subpath'] + row['filename']
-            #download s3_path to full_path
-            #logging.info("downloading file to disk: " + row['subpath'] + row['filename'])
-
             tablename = row['table_name']
-
-            logging.info("loading table " + str(index + 1) + " (" + tablename + ": "+ row['snapshot_id'] + ")")
+            logging.info("attempting to load table " + str(index + 1) + " (" + tablename + ": "+ row['snapshot_id'] + ")")
 
             #Since different files have different date columns, we need to compare to the master list.
-            headers = list(get_column_names(full_path))
+            #Since this is the first time we use the file, try downloading it if it fails
+            try:
+                headers = list(get_column_names(full_path))
+            except FileNotFoundError as e:
+                s3_path = row['s3_folder'] + row['subpath'] + row['filename']
+                logging.info("  file not found. attempting to download file to disk: " + s3_path)
+                urlretrieve(s3_path,full_path)
+                logging.info("  complete. Loading table " + str(index + 1) + " (" + tablename + ": "+ row['snapshot_id'] + ")")
+                headers = list(get_column_names(full_path))
+
             with open(constants['date_headers_filename']) as fh:
                 date_headers = json.load(fh)
                 parseable_headers = date_headers['date_headers']
             to_parse = list(set(parseable_headers) & set(headers))
-            logging.info("  identified date columns: " + str(to_parse))
+            logging.info("  parsing date columns: " + str(to_parse))
 
             ###
             #Load the data into memory
@@ -103,8 +105,11 @@ def csv_to_sql(manifest_path, database_choice):
                 #infer_datetime_format is used to speed up loading if you expect all dates to be in the same format
             parser = lambda x: pd.to_datetime(x, errors='coerce', infer_datetime_format=True)
 
-            #When loading, force all our columns names to follow SQL conventions of case and characters to ease queries.
-            csv_df = pd.read_csv(full_path, encoding="latin1", parse_dates=to_parse, date_parser=parser) #If we have null dates that are non-blank (coded nulls), need to use this: date_parser=parser #parser = lambda x: pd.to_datetime(x, format='%m/%d/%Y', errors='coerce')
+            #load the file
+            csv_df = pd.read_csv(full_path, encoding="latin1", parse_dates=to_parse, date_parser=parser)
+            logging.info("  in memory...")
+
+            #convert column names to follow SQL best practices
             csv_df.columns = map(str.lower, csv_df.columns)
             csv_df.columns = [c.replace(' ', '_') for c in csv_df.columns]
             csv_df.columns = [c.replace('.', '_') for c in csv_df.columns]
@@ -116,13 +121,13 @@ def csv_to_sql(manifest_path, database_choice):
                 for fieldname in currency_fields:
                     csv_df[fieldname].replace(to_replace='[\$,)]',value='', inplace=True, regex=True )
                     csv_df[fieldname] = pd.to_numeric(csv_df[fieldname])
+            logging.info("  table cleanup complete...")
 
-            logging.info("  in memory...")
 
-            #Add a column so that we can put all the snapshots in the same table
+            #add a column so that we can put all the snapshots in the same table
             csv_df['snapshot_id'] = row['snapshot_id']
             csv_df.to_sql(tablename, engine, if_exists='append')
-            logging.info("  table loaded")
+            logging.info("  table loaded into database")
 
 if __name__ == '__main__':
     #sample_add_to_database()
