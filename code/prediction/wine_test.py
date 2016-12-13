@@ -42,8 +42,8 @@ X_test = stdsc.transform(X_test)
 ##################################################
 #Set up our ManyModels instance
 ##################################################
-import train_models
-modeler = train_models.ManyModels()
+import risk_models
+modeler = risk_models.ManyModels()
 
 #Attach our unfitted model instances to the ManyModels instance
 from sklearn.neighbors import KNeighborsClassifier
