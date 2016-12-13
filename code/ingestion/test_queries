@@ -1,0 +1,11 @@
+/*
+update manifest
+set skip = ''
+where snapshot_id = 'geocode_id';
+*/
+
+/*
+SELECT skip, snapshot_id
+	FROM public.manifest
+    where snapshot_id = 'geocode_id';
+    */

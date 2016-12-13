@@ -24,21 +24,30 @@ logging.warning("--------------------starting module------------------")
 #Pushes everything from the logger to the command line output as well.
 logging.getLogger().addHandler(logging.StreamHandler())
 
+#Allow modules to import each other at parallel file structure (TODO clean up this configuration in a refactor, it's messy...)
+from inspect import getsourcefile
+import os.path
+import sys
+current_path = os.path.abspath(getsourcefile(lambda:0))
+current_dir = os.path.dirname(current_path)
+parent_dir = current_dir[:current_dir.rfind(os.path.sep)]
+repo_dir = parent_dir[:parent_dir.rfind(os.path.sep)]
+sys.path.insert(0, parent_dir)
+
+import database_management
+
 #############################
 #CONSTANTS
 #############################
 constants = {
-    'secrets_filename': 'secrets.json',
-    'manifest_filename': 'snapshots_manifest.csv',
-    'date_headers_filename': 'postgres_date_headers.json',
+    'manifest_filename': '\snapshots_manifest.csv',
+    'date_headers_filename': '\postgres_date_headers.json',
 }
 
-def get_connect_str(database_choice):
-    "Loads the secrets json file to retrieve the connection string"
-    with open(constants['secrets_filename']) as fh:
-        secrets = json.load(fh)
-    return secrets[database_choice]['connect_str']
 
+#############################
+#FUNCTIONS
+#############################
 def get_column_names(path):
     with open(path) as f:
         myreader=csv.reader(f,delimiter=',')
@@ -48,7 +57,7 @@ def get_column_names(path):
 def manifest_to_sql(manifest_path, database_choice):
     # Get the list of files to load - using Pandas dataframe (df)
     paths_df = pd.read_csv(manifest_path, parse_dates=['date'])
-    connect_str = get_connect_str(database_choice)
+    connect_str = database_management.get_connect_str(database_choice)
     engine = create_engine(connect_str)
 
 
@@ -59,20 +68,20 @@ def csv_to_sql(manifest_path, database_choice):
     logging.info("Preparing to load " + str(len(paths_df.index)) + " files")
 
     # Connect to SQL - uses sqlalchemy so that we can write from pandas dataframe.
-    connect_str = get_connect_str(database_choice)
+    connect_str = database_management.get_connect_str(database_choice)
     engine = create_engine(connect_str)
 
 
 
     for index, row in paths_df.iterrows():
-        print("checking: " + row['snapshot_id'])
+        logging.info("checking: " + row['snapshot_id'])
         #######################
         #Decide whether to load the row
         #######################
         load_row = False
         if (row['skip'] == "skip") or (row['skip'] == "invalid"):
             load_row = False
-        #See if the table is already loaded
+        #See if the table is already loaded by checking the database table
         elif (row['skip'] == "use"):
 
             database_connection = engine.connect()
@@ -84,7 +93,7 @@ def csv_to_sql(manifest_path, database_choice):
 
                 if database_skip_val == "loaded":
                     load_row = False
-                    manifest_df_copy.set_value(index, 'skip', 'loaded') #make sure the database still says loaded for this row when we reload this procedure
+                    manifest_df_copy.set_value(index, 'skip', 'loaded') #make sure we write 'loaded' to the manifest table when we finish this procedure (instead of 'use')
                 else:
                     load_row = True
             else:
@@ -100,7 +109,7 @@ def csv_to_sql(manifest_path, database_choice):
         if load_row == False:
             logging.info("  skipping table")
         else:
-            full_path = row['local_folder'] + row['subpath'] + row['filename']
+            full_path = repo_dir + row['local_folder'] + row['subpath'] + row['filename']
             tablename = row['table_name']
             logging.info("  attempting to load table")
 
@@ -115,7 +124,7 @@ def csv_to_sql(manifest_path, database_choice):
                 logging.info("  download complete. Loading table " + str(index + 1) + " (" + tablename + ": "+ row['snapshot_id'] + ")")
                 headers = list(get_column_names(full_path))
 
-            with open(constants['date_headers_filename']) as fh:
+            with open(current_dir + constants['date_headers_filename']) as fh:
                 date_headers = json.load(fh)
                 parseable_headers = date_headers['date_headers']
             to_parse = list(set(parseable_headers) & set(headers))
@@ -154,9 +163,9 @@ def csv_to_sql(manifest_path, database_choice):
 
             manifest_df_copy.set_value(index, 'skip', 'loaded')
 
-    #Done looping rows
+    #Done looping rows. Add manifest to database
     manifest_df_copy.to_sql('manifest', engine, if_exists='replace')
 
 
 if __name__ == '__main__':
-    csv_to_sql(constants['manifest_filename'], 'database')
+    csv_to_sql(current_dir + constants['manifest_filename'], 'database')
