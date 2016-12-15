@@ -175,58 +175,61 @@ SELECT
     , c."3br_count" br3_count
     , c."4br_count" br4_count
     , c."5plusbr_count" br5_count
-    , coalesce ((c."0br_count" / c.assisted_units_count), 0) as br0_perc
-    , coalesce ((c."1br_count" / c.assisted_units_count), 0) as br1_perc
-    , coalesce ((c."2br_count" / c.assisted_units_count), 0) as br2_perc
-    , coalesce ((c."3br_count" / c.assisted_units_count), 0) as br3_perc
-    , coalesce ((c."4br_count" / c.assisted_units_count), 0) as br4_perc
-    , coalesce ((c."5plusbr_count" / c.assisted_units_count), 0) as br5_perc
+    , coalesce (case when c.assisted_units_count = 0 then null else (c."0br_count" / c.assisted_units_count) end, 0) as br0_perc
+    , coalesce (case when c.assisted_units_count = 0 then null else (c."1br_count" / c.assisted_units_count) end, 0) as br1_perc
+    , coalesce (case when c.assisted_units_count = 0 then null else (c."2br_count" / c.assisted_units_count) end, 0) as br2_perc
+    , coalesce (case when c.assisted_units_count = 0 then null else (c."3br_count" / c.assisted_units_count) end, 0) as br3_perc
+    , coalesce (case when c.assisted_units_count = 0 then null else (c."4br_count" / c.assisted_units_count) end, 0) as br4_perc
+    , coalesce (case when c.assisted_units_count = 0 then null else (c."5plusbr_count" / c.assisted_units_count) end, 0) as br5_perc
     , null average_bedroom_count
     , null neighborhood_median_rent
     , null neighborhood_lower_quartile_rent
     , null neighbohood_upper_quartile_rent
-    , ( select round ( ( first_value (est_rent) over ( partition by geo_id2 order by year desc)
-             - first_value (est_rent) over ( partition by geo_id2 order by year asc) ) / first_value (est_rent) 
-			 over ( partition by geo_id2 order by year asc)*100, 2) as diff
-  from (
-		select case when snapshot_id = 	'ACS_09_5YR_B25058_with_ann.csv' then 2009
-					when snapshot_id = 'ACS_10_5YR_B25058_with_ann.csv' then 2010
-					when snapshot_id = 'ACS_11_5YR_B25058_with_ann.csv' then 2011
-					when snapshot_id = 'ACS_12_5YR_B25058_with_ann.csv' then 2012
-					when snapshot_id = 'ACS_13_5YR_B25058_with_ann.csv' then 2013
-					when snapshot_id = 'ACS_14_5YR_B25058_with_ann.csv' then 2014
-			   end as year, a.geo_id2, a."geo_display-label" as display, cast (a.hd01_vd01 as numeric) est_rent, hd02_vd01 margin_of_error
-		  from acs_rent_median a
-		 where geo_Id2 = '01001020100' --Needs to be changed!!!!! Join to geocode.
-        ) b ) as percent_increase_neighborhood_median_rent
-    , ( select round (( first_value (est_rent) over ( partition by geo_id2 order by year desc)
-             - first_value (est_rent) over ( partition by geo_id2 order by year asc) ) / first_value (est_rent) 
-			 over ( partition by geo_id2 order by year asc)*100, 2) as diff
-  from (
-		select case when snapshot_id = 	'ACS_09_5YR_B25059_with_ann.csv' then 2009
-					when snapshot_id = 'ACS_10_5YR_B25059_with_ann.csv' then 2010
-					when snapshot_id = 'ACS_11_5YR_B25059_with_ann.csv' then 2011
-					when snapshot_id = 'ACS_12_5YR_B25059_with_ann.csv' then 2012
-					when snapshot_id = 'ACS_13_5YR_B25059_with_ann.csv' then 2013
-					when snapshot_id = 'ACS_14_5YR_B25059_with_ann.csv' then 2014
-			   end as year, a.geo_id2, a."geo_display-label" as display, cast (a.hd01_vd01 as numeric) est_rent, hd02_vd01 margin_of_error, snapshot_id
-		  from acs_rent_upper a
-		 where geo_Id2 = '01001020100'
-		) b ) percent_increase_neighborhood_upper_rent
-    , ( select round (( first_value (est_rent) over ( partition by geo_id2 order by year desc)
-               - first_value (est_rent) over ( partition by geo_id2 order by year asc) ) / first_value (est_rent)
-			   over ( partition by geo_id2 order by year asc)*100, 2) as diff
-  from (
-		select case when snapshot_id = 	'ACS_09_5YR_B25057_with_ann.csv' then 2009
-					when snapshot_id = 'ACS_10_5YR_B25057_with_ann.csv' then 2010
-					when snapshot_id = 'ACS_11_5YR_B25057_with_ann.csv' then 2011
-					when snapshot_id = 'ACS_12_5YR_B25057_with_ann.csv' then 2012
-					when snapshot_id = 'ACS_13_5YR_B25057_with_ann.csv' then 2013
-					when snapshot_id = 'ACS_14_5YR_B25057_with_ann.csv' then 2014
-			   end as year, a.geo_id2, a."geo_display-label" as display, cast (a.hd01_vd01 as numeric) est_rent, hd02_vd01 margin_of_error, snapshot_id
-		  from acs_rent_lower a
-		 where geo_Id2 = '01001020100'
-		) b ) percent_increase_neighborhood_lower_rent
+--     , ( select round ( ( first_value (est_rent) over ( partition by geo_id2 order by year desc)
+--              - first_value (est_rent) over ( partition by geo_id2 order by year asc) ) / first_value (est_rent) 
+-- 			 over ( partition by geo_id2 order by year asc)*100, 2) as diff
+--   from (
+-- 		select case when snapshot_id = 	'ACS_09_5YR_B25058_with_ann.csv' then 2009
+-- 					when snapshot_id = 'ACS_10_5YR_B25058_with_ann.csv' then 2010
+-- 					when snapshot_id = 'ACS_11_5YR_B25058_with_ann.csv' then 2011
+-- 					when snapshot_id = 'ACS_12_5YR_B25058_with_ann.csv' then 2012
+-- 					when snapshot_id = 'ACS_13_5YR_B25058_with_ann.csv' then 2013
+-- 					when snapshot_id = 'ACS_14_5YR_B25058_with_ann.csv' then 2014
+-- 			   end as year, a.geo_id2, a."geo_display-label" as display, cast (a.hd01_vd01 as numeric) est_rent, hd02_vd01 margin_of_error
+-- 		  from acs_rent_median a
+-- 		 where geo_Id2 = '01001020100' --Needs to be changed!!!!! Join to geocode.
+--         ) b ) 
+    , null as percent_increase_neighborhood_median_rent
+--     , ( select round (( first_value (est_rent) over ( partition by geo_id2 order by year desc)
+--              - first_value (est_rent) over ( partition by geo_id2 order by year asc) ) / first_value (est_rent) 
+-- 			 over ( partition by geo_id2 order by year asc)*100, 2) as diff
+--   from (
+-- 		select case when snapshot_id = 	'ACS_09_5YR_B25059_with_ann.csv' then 2009
+-- 					when snapshot_id = 'ACS_10_5YR_B25059_with_ann.csv' then 2010
+-- 					when snapshot_id = 'ACS_11_5YR_B25059_with_ann.csv' then 2011
+-- 					when snapshot_id = 'ACS_12_5YR_B25059_with_ann.csv' then 2012
+-- 					when snapshot_id = 'ACS_13_5YR_B25059_with_ann.csv' then 2013
+-- 					when snapshot_id = 'ACS_14_5YR_B25059_with_ann.csv' then 2014
+-- 			   end as year, a.geo_id2, a."geo_display-label" as display, cast (a.hd01_vd01 as numeric) est_rent, hd02_vd01 margin_of_error, snapshot_id
+-- 		  from acs_rent_upper a
+-- 		 where geo_Id2 = '01001020100'
+-- 		) b ) 
+    , null as percent_increase_neighborhood_upper_rent
+--     , ( select round (( first_value (est_rent) over ( partition by geo_id2 order by year desc)
+--                - first_value (est_rent) over ( partition by geo_id2 order by year asc) ) / first_value (est_rent)
+-- 			   over ( partition by geo_id2 order by year asc)*100, 2) as diff
+--   from (
+-- 		select case when snapshot_id = 	'ACS_09_5YR_B25057_with_ann.csv' then 2009
+-- 					when snapshot_id = 'ACS_10_5YR_B25057_with_ann.csv' then 2010
+-- 					when snapshot_id = 'ACS_11_5YR_B25057_with_ann.csv' then 2011
+-- 					when snapshot_id = 'ACS_12_5YR_B25057_with_ann.csv' then 2012
+-- 					when snapshot_id = 'ACS_13_5YR_B25057_with_ann.csv' then 2013
+-- 					when snapshot_id = 'ACS_14_5YR_B25057_with_ann.csv' then 2014
+-- 			   end as year, a.geo_id2, a."geo_display-label" as display, cast (a.hd01_vd01 as numeric) est_rent, hd02_vd01 margin_of_error, snapshot_id
+-- 		  from acs_rent_lower a
+-- 		 where geo_Id2 = '01001020100'
+-- 		) b ) 
+    , null as percent_increase_neighborhood_lower_rent
     , null ratio_neighborhood_median_to_gross_rent
     , null ratio_neighborhood_lower_to_gross_rent
     , null ratio_neighborhood_upper_to_gross_rent
@@ -241,7 +244,7 @@ ON decisions_tests.contract_number = c.contract_number
 --	OR status_test = 'out'
 
 --Optionally, get just a subset of contract_numbers. This sorts by earliest expiration for each contract. 
-WHERE decisions_tests.contract_number 
+/* WHERE decisions_tests.contract_number 
 IN ( 	select * from
 	contracts_random200
 
@@ -254,7 +257,7 @@ IN ( 	select * from
 	--'012063NISUP' 
 	--'OH16Q921001'
 	)
-) a ) b ) c ) d
+ */) a ) b ) c ) d
 --where dec1 = 'X'
 --where contract_number = 'AK06S031001'
 where decision != 'no change';
