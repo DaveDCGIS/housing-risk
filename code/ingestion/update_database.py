@@ -40,7 +40,7 @@ import database_management
 #CONSTANTS
 #############################
 constants = {
-    'manifest_filename': '\snapshots_manifest.csv',
+    'manifest_filename': 'snapshots_manifest.csv',
     'date_headers_filename': '\postgres_date_headers.json',
 }
 
@@ -63,6 +63,7 @@ def manifest_to_sql(manifest_path, database_choice):
 
 def csv_to_sql(manifest_path, database_choice):
     # Get the list of files to load - using Pandas dataframe (df)
+    print (manifest_path)
     paths_df = pd.read_csv(manifest_path, parse_dates=['date'])
     manifest_df_copy = paths_df #this copy will be added to the SQL manifest
     logging.info("Preparing to load " + str(len(paths_df.index)) + " files")
