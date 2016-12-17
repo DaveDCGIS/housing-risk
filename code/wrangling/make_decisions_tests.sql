@@ -1,26 +1,28 @@
-﻿/*
+--Make the tables
+
+/*
 First get rid of the current version of the decisions_test table
 */
-DROP TABLE public.decisions_tests;
+--DROP TABLE public.decisions_tests;
 
 
 /*
 -------------------------
 The 'decisions_tests' table compares each snapshot to the previous one,
-and returns the results of the various tests. It is then necessary to 
+and returns the results of the various tests. It is then necessary to
 decide which tests we want to use to create the actual 'decisions' table.
 -------------------------
 */
 WITH decisions_tests AS (
 	--This is our full report of decision tests
-	SELECT 
+	SELECT
 		contract_number
 		, snapshot_id
-		
+
 		--Has the expiration been extended?
-		, CASE WHEN EXTRACT(epoch FROM time_diff)/3600 > 0 
+		, CASE WHEN EXTRACT(epoch FROM time_diff)/3600 > 0
 		       THEN 'extended'
-		     WHEN EXTRACT(epoch FROM time_diff)/3600 = 0 
+		     WHEN EXTRACT(epoch FROM time_diff)/3600 = 0
 		       THEN 'no change'
 		     WHEN time_diff IS NULL
 		       THEN 'first'
@@ -60,16 +62,16 @@ WITH decisions_tests AS (
 		, previous_expiration_date
 		, previous_snapshot_id
 		, time_diff
-		 
+
 	FROM (
-		SELECT 
-		
-		  
-		  TRIM(LAG(expiration_passed_check,1) 
+		SELECT
+
+
+		  TRIM(LAG(expiration_passed_check,1)
 			    OVER (partition by contract_number order by snapshot_id)) as previous_expiration_passed_check
 		, expiration_passed_check
 		, TRIM(tracs_status_name) as tracs_status_name
-		, TRIM(LAG(tracs_status_name,1) 
+		, TRIM(LAG(tracs_status_name,1)
 			    OVER (partition by contract_number order by snapshot_id)) as previous_status
 		, (tracs_overall_expiration_date - previous_expiration_date) as time_diff
 		, contract_number
@@ -82,7 +84,7 @@ WITH decisions_tests AS (
 		, previous_expiration_date
 		, tracs_overall_exp_fiscal_year
 		, tracs_overall_expire_quarter
-		
+
 		FROM (
 			SELECT contract_number
 			, property_id, property_name_text
@@ -98,17 +100,17 @@ WITH decisions_tests AS (
 				, contract_term_months_qty
 				, manifest.date AS snapshot_date
 
-				, CASE 	WHEN manifest.date > tracs_overall_expiration_date 
+				, CASE 	WHEN manifest.date > tracs_overall_expiration_date
 					THEN 'expired'
 					ELSE 'ok'
 				  END AS expiration_passed_check
-				  
+
 			  FROM public.contracts
 			  LEFT JOIN public.manifest
 			  ON public.contracts.snapshot_id = public.manifest.snapshot_id
 		  ) as subtable
 	) AS decision_table
-) 
+)
 
 
 --Make a new table with the data

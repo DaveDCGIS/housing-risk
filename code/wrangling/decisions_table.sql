@@ -1,11 +1,12 @@
-﻿drop table decisions;
+--mycomment
+--drop table decisions;
 
 create table decisions
 as
 	/*
 	--------------------------
 	contract_number_queries
-	These are virtual tables we can plug into the 'where in(virtual_table)' statement to filter down to only some contracts. 
+	These are virtual tables we can plug into the 'where in(virtual_table)' statement to filter down to only some contracts.
 	--------------------------*/
 	WITH
 
@@ -18,7 +19,7 @@ as
 	)
 
 	, contracts_latest100 AS (
-	SELECT contract_number		--, MIN(tracs_overall_expiration_date) 
+	SELECT contract_number		--, MIN(tracs_overall_expiration_date)
 		FROM contracts
 		GROUP BY contract_number
 		ORDER BY MIN(tracs_overall_expiration_date) DESC
@@ -38,7 +39,7 @@ as
 
 	--This one can't be used by itself b/c of the select date
 	, all_contracts_sorted AS (
-	SELECT    contract_number 
+	SELECT    contract_number
 		, MIN(tracs_overall_expiration_date) AS earliest_expiration
 	FROM contracts
 	GROUP BY contract_number
@@ -55,7 +56,7 @@ as
 		FROM all_contracts_sorted
 		) AS row_number_added
 	WHERE   rownum >= 1
-	    AND rownum <= 500 
+	    AND rownum <= 500
 	ORDER BY RowNum
 	)
 
@@ -68,7 +69,7 @@ as
 		FROM all_contracts_sorted
 		) AS row_number_added
 	WHERE   rownum >= 501
-	    AND rownum <= 1000 
+	    AND rownum <= 1000
 	ORDER BY RowNum
 	)
 
@@ -79,7 +80,7 @@ as
 
 --Query to view the decision_tests table
 /*
-SELECT * 
+SELECT *
 FROM decisions_tests
 WHERE contract_number IN ( select * from contracts_random100)
 */
@@ -90,32 +91,32 @@ WHERE contract_number IN ( select * from contracts_random100)
 ------------------
 --Choose which tests we want to use to create decisions
 select count( dec1 ) over ( partition by contract_number ) as previous_churn_decisions, d.* from (
-select case when lag ( max_d ) over ( partition by contract_number order by snapshot_id ) = 1 and max_d = 2 then 'X' end as dec1, 
+select case when lag ( max_d ) over ( partition by contract_number order by snapshot_id ) = 1 and max_d = 2 then 'X' end as dec1,
 first_value (lag_qty) over (partition by contract_number, contract_term_months_qty, cnt_d order by snapshot_id RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING ) as previous_contract_term_months_qty, c.*
 from (
-select max (dec) over ( partition by contract_number, x_cnt order by snapshot_id ) max_d, 
+select max (dec) over ( partition by contract_number, x_cnt order by snapshot_id ) max_d,
        count (qty_diff) over (partition by contract_number order by snapshot_id) as cnt_d, b.*
 from (
-select count( case decision when 'out' then 1 
-                            when 'in'  then 2 
+select count( case decision when 'out' then 1
+                            when 'in'  then 2
 							else null
 			end ) over ( partition by contract_number order by snapshot_id ) as x_cnt,
-              case decision when 'out' then 1 
-                            when 'in'  then 2 
+              case decision when 'out' then 1
+                            when 'in'  then 2
 							else null
-			end as dec, 
+			end as dec,
        case when lag_qty != contract_term_months_qty then 'X' else null end as qty_diff, a.*
   from (
-SELECT 	  
+SELECT
 	--Compare tests to decide the decision
-	CASE 
-		WHEN (expiration_extended_test = 'extended' 
+	CASE
+		WHEN (expiration_extended_test = 'extended'
 		  AND status_test = 'no change'
 		  AND TRIM(c.tracs_status_name) = 'Active')
 		  THEN 'in'
 
 		WHEN status_test = 'out' THEN 'out'
-		WHEN expiration_extended_test = 'no change' 
+		WHEN expiration_extended_test = 'no change'
 		  AND status_test = 'no change'
 		  THEN 'no change'
 		WHEN expiration_extended_test = 'first'
@@ -190,11 +191,11 @@ ON decisions_tests.contract_number = c.contract_number
   AND decisions_tests.snapshot_id = c.snapshot_id
 
 --Optionally, filter the decisions results
---WHERE expiration_test = 'in' 
+--WHERE expiration_test = 'in'
 --	OR status_test = 'out'
 
---Optionally, get just a subset of contract_numbers. This sorts by earliest expiration for each contract. 
-WHERE decisions_tests.contract_number 
+--Optionally, get just a subset of contract_numbers. This sorts by earliest expiration for each contract.
+WHERE decisions_tests.contract_number
 IN ( 	select * from
 	contracts_random200
 
@@ -204,11 +205,10 @@ IN ( 	select * from
 	--contracts_random100
 	--contracts_500_1
 	--contracts_500_2
-	--'012063NISUP' 
+	--'012063NISUP'
 	--'OH16Q921001'
 	)
 ) a ) b ) c ) d
 --where dec1 = 'X'
 --where contract_number = 'AK06S031001'
 order by contract_number, snapshot_id;
-
