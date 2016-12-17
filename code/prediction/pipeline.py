@@ -18,7 +18,7 @@ from sqlalchemy import create_engine
 #Configure logging. See /logs/example-logging.py for examples of how to use this.
 logging_filename = "../logs/pipeline.log"
 logging.basicConfig(filename=logging_filename, level=logging.DEBUG)
-logging.warning("--------------------starting module------------------")
+logging.warning("--------------------starting pipeline.py------------------")
 #Pushes everything from the logger to the command line output as well.
 logging.getLogger().addHandler(logging.StreamHandler())
 

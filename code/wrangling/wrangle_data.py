@@ -60,7 +60,7 @@ def drop_table(tablename):
     session.close()
 
 def make_table(sqlfilename):
-    
+
     session = get_database_session()
 
     # Open and read the file as a single buffer
@@ -85,4 +85,4 @@ if __name__ == '__main__':
         drop_table('decisions_tests')
         drop_table('decisions')
         make_table('make_decisions_tests.sql')
-        make_table('decisions_table.sql')
+        make_table('dec_tab.sql')
