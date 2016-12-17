@@ -53,17 +53,50 @@ def get_decisions_table():
     fd = open(query_path, 'r')
     sqlFile = fd.read()
     fd.close()
-    query_text = "select * from (" + sqlFile +  """
+    query_text = "select" + """
+                        temp.decision
+                        , temp.contract_number
+                        , temp.snapshot_id
+
+                        , rent.hd01_vd01 as median_rent
+
+                        , lag(c.contract_term_months_qty,1) over (partition by c.contract_number order by c.snapshot_id) term_mths_lag
+                        , c.contract_term_months_qty
+                        , c.assisted_units_count
+                        , c.is_hud_administered_ind
+                        , c.is_acc_old_ind
+                        , c.is_acc_performance_based_ind
+                        , c.program_type_name
+                        , c.program_type_group_name
+                        , c.rent_to_FMR_ratio
+                        , c."0br_count" br0_count
+                        , c."1br_count" br1_count
+                        , c."2br_count" br2_count
+                        , c."3br_count" br3_count
+                        , c."4br_count" br4_count
+                        , c."5plusbr_count" br5_count
+                        """ + "from (" + sqlFile +  """
                                 ) as temp
-                inner join contracts
-                on contracts.contract_number = temp.contract_number
+                inner join contracts as c
+                on c.contract_number = temp.contract_number and c.snapshot_id = temp.snapshot_id
+                inner join geocode as g
+                on c.property_id = g.property_id
+                inner join acs_rent_median as rent
+                on g.geoid::text = rent.geo_id2::text
+
                 where churn_flag<>'churn' and decision in ('in', 'out')
                 """
 
     query_result = pd.read_sql(query_text, database_connection)
-    print(query_result.head())
+    print(query_result.describe())
     return query_result
 
-if __name__ == '__main__':
-    #run_simple_query()
+
+def run_pipeline():
     decisions_df = get_decisions_table()
+    return decisions_df
+
+
+
+if __name__ == '__main__':
+    dataframe = run_pipeline()
