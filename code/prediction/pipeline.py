@@ -13,7 +13,6 @@ Starting point for running our models.
 ##########################################################################
 import logging
 import pandas as pd
-from sqlalchemy import create_engine
 
 #Configure logging. See /logs/example-logging.py for examples of how to use this.
 logging_filename = "../logs/pipeline.log"
@@ -39,16 +38,32 @@ import database_management
 
 def run_simple_query():
     #Connect to the database
-    connection_string = database_management.get_connect_str('database')
-    engine = create_engine(connection_string)
-    database_connection = engine.connect()
-
+    database_connection = database_management.get_database_connection('database')
     query_result = database_connection.execute("select snapshot_id, table_name from manifest where snapshot_id='c2005-07'")
     for query_row in query_result:
         print(query_row['snapshot_id'] + " | " + query_row['table_name'])
 
+def get_decisions_table():
+    #Connect to the database
+    database_connection = database_management.get_database_connection('database')
+    query_result = database_connection.execute("select snapshot_id, table_name from manifest where snapshot_id='c2005-07'")
 
+    # Open and read the SQL command file as a single buffer
+    query_path = parent_dir + "\wrangling\decisions_partial_churn_filter.sql"
+    fd = open(query_path, 'r')
+    sqlFile = fd.read()
+    fd.close()
+    query_text = "select * from (" + sqlFile +  """
+                                ) as temp
+                inner join contracts
+                on contracts.contract_number = temp.contract_number
+                where churn_flag<>'churn' and decision in ('in', 'out')
+                """
 
+    query_result = pd.read_sql(query_text, database_connection)
+    print(query_result.head())
+    return query_result
 
 if __name__ == '__main__':
-    run_simple_query()
+    #run_simple_query()
+    decisions_df = get_decisions_table()
