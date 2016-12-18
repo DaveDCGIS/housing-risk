@@ -55,19 +55,16 @@ def get_decisions_table():
     fd.close()
     query_text = "select" + """
                         temp.decision
-                        , temp.contract_number
-                        , temp.snapshot_id
 
-                        , rent.hd01_vd01 as median_rent
+                        /*, rent.hd01_vd01 as median_rent*/
 
-                        , lag(c.contract_term_months_qty,1) over (partition by c.contract_number order by c.snapshot_id) term_mths_lag
+                        /*, lag(c.contract_term_months_qty,1) over (partition by c.contract_number order by c.snapshot_id) term_mths_lag*/
                         , c.contract_term_months_qty
                         , c.assisted_units_count
+
                         , c.is_hud_administered_ind
-                        , c.is_acc_old_ind
-                        , c.is_acc_performance_based_ind
-                        , c.program_type_name
                         , c.program_type_group_name
+
                         , c.rent_to_FMR_ratio
                         , c."0br_count" br0_count
                         , c."1br_count" br1_count
@@ -88,12 +85,28 @@ def get_decisions_table():
                 """
 
     query_result = pd.read_sql(query_text, database_connection)
-    print(query_result.describe())
+    print(query_result.head(5))
     return query_result
 
 
 def run_pipeline():
     decisions_df = get_decisions_table()
+
+    #categorical encoding - method #1
+    decision_mapping = {'in': 1, 'out': 0}
+    decisions_df['decision'] = decisions_df['decision'].map(decision_mapping)
+    is_mapping = {'Y': 1, 'N': 0} #used for any field that starts with is_
+    decisions_df['is_hud_administered_ind'] = decisions_df['is_hud_administered_ind'].map(is_mapping)
+
+    #method #2
+    from sklearn.preprocessing import LabelEncoder
+    label_encoder_program_name = LabelEncoder()
+    decisions_df['program_type_group_name'] = label_encoder_program_name.fit_transform(decisions_df['program_type_group_name'])
+
+    #handle imputation
+
+
+    print(decisions_df.head())
     return decisions_df
 
 
