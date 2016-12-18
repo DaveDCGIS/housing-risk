@@ -41,7 +41,7 @@ import database_management
 #############################
 constants = {
     'manifest_filename': 'snapshots_manifest.csv',
-    'date_headers_filename': '\postgres_date_headers.json',
+    'date_headers_filename': 'postgres_date_headers.json',
 }
 
 
@@ -125,7 +125,7 @@ def csv_to_sql(manifest_path, database_choice):
                 logging.info("  download complete. Loading table " + str(index + 1) + " (" + tablename + ": "+ row['snapshot_id'] + ")")
                 headers = list(get_column_names(full_path))
 
-            with open(current_dir + constants['date_headers_filename']) as fh:
+            with open(current_dir + "\" + constants['date_headers_filename']) as fh:
                 date_headers = json.load(fh)
                 parseable_headers = date_headers['date_headers']
             to_parse = list(set(parseable_headers) & set(headers))
@@ -169,4 +169,4 @@ def csv_to_sql(manifest_path, database_choice):
 
 
 if __name__ == '__main__':
-    csv_to_sql(current_dir + constants['manifest_filename'], 'database')
+    csv_to_sql(current_dir + "\" + constants['manifest_filename'], 'database')
