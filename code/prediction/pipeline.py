@@ -84,32 +84,45 @@ def get_decisions_table():
                 where churn_flag<>'churn' and decision in ('in', 'out')
                 """
 
-    query_result = pd.read_sql(query_text, database_connection)
-    print(query_result.head(5))
-    return query_result
+    query_dataframe = pd.read_sql(query_text, database_connection)
+    return query_dataframe
+def get_custom_pipeline():
+
+    from sklearn.preprocessing import StandardScaler, Imputer, LabelEncoder, MinMaxScaler, OneHotEncoder
+    from sklearn.pipeline import Pipeline
+
+    #TODO figure out how to use column names instead of numbers
+    pipeline = Pipeline([('onehot', OneHotEncoder(categorical_features=[3], sparse=False))])
+
+    return pipeline
 
 
-def run_pipeline():
-    decisions_df = get_decisions_table()
+def run_pipeline(dataframe):
 
     #categorical encoding - method #1
     decision_mapping = {'in': 1, 'out': 0}
-    decisions_df['decision'] = decisions_df['decision'].map(decision_mapping)
+    dataframe['decision'] = dataframe['decision'].map(decision_mapping)
     is_mapping = {'Y': 1, 'N': 0} #used for any field that starts with is_
-    decisions_df['is_hud_administered_ind'] = decisions_df['is_hud_administered_ind'].map(is_mapping)
+    dataframe['is_hud_administered_ind'] = dataframe['is_hud_administered_ind'].map(is_mapping)
 
     #method #2
     from sklearn.preprocessing import LabelEncoder
     label_encoder_program_name = LabelEncoder()
-    decisions_df['program_type_group_name'] = label_encoder_program_name.fit_transform(decisions_df['program_type_group_name'])
+    dataframe['program_type_group_name'] = label_encoder_program_name.fit_transform(dataframe['program_type_group_name'])
 
     #handle imputation
+    pass
 
+    #scaling
+    #from sklearn.preprocessing import MinMaxScaler, StandardScaler
+    #stdsc = StandardScaler()
+    #dataframe = stdsc.fit_transform(dataframe)
 
-    print(decisions_df.head())
-    return decisions_df
+    #TODO will change this to return a numpy array instead
+    return dataframe
 
 
 
 if __name__ == '__main__':
-    dataframe = run_pipeline()
+    dataframe = get_decisions_table()
+    data_array = run_pipeline(dataframe)

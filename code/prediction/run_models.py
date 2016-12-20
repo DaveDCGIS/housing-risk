@@ -32,21 +32,25 @@ def load_sample_data():
     return data
 
 def load_real_data():
-    data = pipeline.run_pipeline()
+    data = pipeline.get_decisions_table()
     return data
 
 def run_models(data):
+    data = pipeline.run_pipeline(data)
+    print(data.head())
+
     X = data.iloc[:,1:].values
     y = data.iloc[:,0].values
 
+    #Implement our pipeline
+    print("--------starting pipeline---------")
+    print(X[:,:5])
+    pipe = pipeline.get_custom_pipeline()
+    X_mod = pipe.fit_transform(X)
+    print(X_mod[:,:5])
+
     #Just one split for now
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
-
-    #preprocessing
-    from sklearn.preprocessing import MinMaxScaler, StandardScaler
-    stdsc = StandardScaler()
-    X_train = stdsc.fit_transform(X_train)
-    X_test = stdsc.transform(X_test)
 
     ##################################################
     #Set up our ManyModels instance
@@ -87,7 +91,9 @@ def run_models(data):
     print("Model performance:")
     pp.pprint(modeler.scores)
 
+    print(modeler.answers.head(20))
 
 if __name__ == '__main__':
     data = load_real_data()
+    print(data.head())
     run_models(data)
