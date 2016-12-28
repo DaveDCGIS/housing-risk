@@ -1,13 +1,21 @@
 ##################################################
 #Imports
 ##################################################
-import numpy as np
+import numpy
 import pandas
 import sklearn
 from sklearn import metrics
 from sklearn.model_selection import train_test_split
+import sys
 
-import pipeline
+#Configure logging. See /logs/example-logging.py for examples of how to use this.
+import logging
+logging_filename = "../logs/pipeline.log"
+logging.basicConfig(filename=logging_filename, level=logging.DEBUG)
+#Pushes everything from the logger to the command line output as well.
+#logging.getLogger().addHandler(logging.StreamHandler())
+
+import data_management
 
 ##################################################
 #Load the data
@@ -31,23 +39,34 @@ def load_sample_data():
                     ]
     return data
 
-def load_real_data():
-    data = pipeline.get_decisions_table()
-    return data
+def load_real_data(debug = False):
+    dataframe = data_management.get_decisions_table(equal_split = True)
+    if debug == True:
+        dataframe.to_csv('before.csv')
 
-def run_models(data):
-    data = pipeline.run_pipeline(data)
-    print(data.head())
+    return dataframe
 
-    X = data.iloc[:,1:].values
-    y = data.iloc[:,0].values
+def run_models(dataframe, debug = False):
+    dataframe = data_management.clean_dataframe(dataframe)
+
+    #Move the data into Numpy arrays
+    logging.info("Splitting X and y from the data set...")
+    X = dataframe.iloc[:,1:].values
+    y = dataframe.iloc[:,0].values
 
     #Implement our pipeline
-    print("--------starting pipeline---------")
-    print(X[:,:5])
-    pipe = pipeline.get_custom_pipeline()
+    pipe = data_management.get_custom_pipeline()
+    logging.info("fit_transform our pipeline...")
     X_mod = pipe.fit_transform(X)
-    print(X_mod[:,:5])
+
+    #Debugging for the NaN error
+    finite_check = numpy.all(numpy.isfinite(X_mod))
+    nan_check = numpy.any(numpy.isnan(X_mod))
+    print("Finite: {}, NaN: {}".format(finite_check, nan_check))
+
+    #Save the transformed data to a CSV file if desired, to make sure our transformations are working properly
+    if debug == True:
+        numpy.savetxt("after.csv", X_mod, delimiter=",", fmt='%10.5f')
 
     #Just one split for now
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
@@ -55,8 +74,7 @@ def run_models(data):
     ##################################################
     #Set up our ManyModels instance
     ##################################################
-    import risk_models
-    modeler = risk_models.ManyModels()
+    modeler = data_management.ManyModels()
 
     #Attach our unfitted model instances to the ManyModels instance
     from sklearn.neighbors import KNeighborsClassifier
@@ -73,7 +91,7 @@ def run_models(data):
     modeler.y = y_train
 
     #We can call fit in 3 different ways depending on our needs.
-    modeler.fit("KNeighborsClassifier_6")    #fit just one model
+    modeler.fit("RandomForestClassifier")    #fit just one model
     modeler.fit(model_list=['KNeighborsClassifier_12', 'RandomForestClassifier'])   #fit a list of models
     modeler.fit() #fits all models
 
@@ -91,9 +109,14 @@ def run_models(data):
     print("Model performance:")
     pp.pprint(modeler.scores)
 
-    print(modeler.answers.head(20))
+    return modeler
 
 if __name__ == '__main__':
-    data = load_real_data()
-    print(data.head())
-    run_models(data)
+
+    #Debug option is for outputting CSV files of the data for comparison purposes
+    debug = False
+    if 'debug' in sys.argv:
+        debug = True
+
+    dataframe = load_real_data(debug=debug)
+    run_models(dataframe, debug = debug)
