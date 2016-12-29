@@ -101,10 +101,10 @@ class ManyModels:
 
             self.scores[key] = { }
             if self.y_test is not None:
-                self.scores[key]['precision'] = metrics.precision_score(y_true = self.y_test, y_pred = self.answers[key].as_matrix(), average="weighted")
-                self.scores[key]['recall'] = metrics.recall_score(y_true = self.y_test, y_pred=self.answers[key], average="weighted")
-                self.scores[key]['accuracy'] = metrics.accuracy_score(y_true = self.y_test, y_pred=self.answers[key])
-                self.scores[key]['f1'] = metrics.f1_score(y_true = self.y_test, y_pred=self.answers[key], average="weighted")
+                self.scores[key]['precision'] = round(metrics.precision_score(y_true = self.y_test, y_pred = self.answers[key].as_matrix(), average="weighted"),4)
+                self.scores[key]['recall'] = round(metrics.recall_score(y_true = self.y_test, y_pred=self.answers[key], average="weighted"),4)
+                self.scores[key]['accuracy'] = round(metrics.accuracy_score(y_true = self.y_test, y_pred=self.answers[key]),4)
+                self.scores[key]['f1'] = round(metrics.f1_score(y_true = self.y_test, y_pred=self.answers[key], average="weighted"),4)
 
         return self.answers
 
@@ -202,22 +202,30 @@ def get_decisions_table(equal_split = False):
 
     return query_dataframe
 
-def get_custom_pipeline():
+def get_custom_pipeline(col_names=None):
     '''
     Defines the pipeline needed to transform our data after it has been cleaned by the clean_dataframe method
+    col_names is needed to compare to the list of categorical columns
     '''
-
     logging.info("Getting a custom pipeline...")
+
+    #OneHotEncoder needs True/False on which columns to encode
+    #TODO change this to pull from meta.json
+    categorical_features = {"program_type_group_name": ['example', 'program', 'names'], "is_hud_administered_ind": ['N', 'Y']}
+    mask = [False]*len(col_names)               #Initialize the list to all False
+    for index, name in enumerate(col_names):
+        if name in categorical_features:
+            mask[index] = True
+
     from sklearn.preprocessing import StandardScaler, Imputer, LabelEncoder, MinMaxScaler, OneHotEncoder
     from sklearn.pipeline import Pipeline
 
     #TODO figure out how to use column names instead of numbers (categorical_features = [4] represents 5th column i.e. program_type_group_name)
     pipeline = Pipeline([   ('imputer', Imputer())
-                            ,('onehot', OneHotEncoder(categorical_features=[4], sparse=False))
+                            ,('onehot', OneHotEncoder(categorical_features=mask, sparse=False))
                             ])
 
     return pipeline
-
 
 def clean_dataframe(dataframe, debug=False):
     '''
@@ -239,6 +247,7 @@ def clean_dataframe(dataframe, debug=False):
     if debug == True:
         dataframe.to_csv('before.csv')
 
+    #TODO change all the categorical encoding to use meta.json as the categorical source (avoids issue w/ LabelEncoder missing some categories, and contains data outside of code)
     #categorical encoding - method #1
     decision_mapping = {'in': 1, 'out': 0}
     dataframe['decision'] = dataframe['decision'].map(decision_mapping)

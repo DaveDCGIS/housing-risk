@@ -7,6 +7,7 @@ import sklearn
 from sklearn import metrics
 from sklearn.model_selection import train_test_split
 import sys
+import pickle
 
 #Configure logging. See /logs/example-logging.py for examples of how to use this.
 import logging
@@ -46,7 +47,22 @@ def load_real_data(debug = False):
 
     return dataframe
 
+def load_pickled_data():
+    with open('dataframe.pickle', 'rb') as f:
+        return pickle.load(f)
+
+def pickle_dataframe(dataframe):
+    with open('dataframe.pickle', 'wb') as f:
+        pickle.dump(dataframe, f)
+
+def pickle_dataframe(dataframe):
+    with open('dataframe.pickle', 'wb') as f:
+        pickle.dump(dataframe, f)
+
 def check_array_errors(array):
+    '''
+    Can be added to another function to do debugging of errors associated with array formatting before passing to sklearn models
+    '''
 
     #Debugging for the NaN error
     finite_check = numpy.all(numpy.isfinite(array))
@@ -57,24 +73,28 @@ def check_array_errors(array):
 
 
 def run_models(dataframe, debug = False):
+
     dataframe = data_utilities.clean_dataframe(dataframe)
 
-    #Move the data into Numpy arrays
+    #Move the data into Numpy arrays - some pipeline methods require Numpy so cleaner to convert explicitly up front instead of passing in the dataframe
     logging.info("Splitting X and y from the data set...")
+    col_names = list(dataframe)
     X = dataframe.iloc[:,1:].values
     y = dataframe.iloc[:,0].values
+    X_names = col_names[1:]
+
+    #Just one split for now
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
 
     #Implement our pipeline
-    pipe = data_utilities.get_custom_pipeline()
+    pipe = data_utilities.get_custom_pipeline(col_names = X_names)
     logging.info("fit_transform our pipeline...")
-    X_mod = pipe.fit_transform(X)
+    X_train = pipe.fit_transform(X_train)
+    X_test = pipe.transform(X_test)
 
     #Save the transformed data to a CSV file if desired, to make sure our transformations are working properly
     if debug == True:
-        numpy.savetxt("after.csv", X_mod, delimiter=",", fmt='%10.5f')
-
-    #Just one split for now
-    X_train, X_test, y_train, y_test = train_test_split(X_mod, y, test_size=0.3, random_state=0)
+        numpy.savetxt("after.csv", X_train, delimiter=",", fmt='%10.5f')
 
 
     ##################################################
@@ -119,10 +139,17 @@ def run_models(dataframe, debug = False):
 
 if __name__ == '__main__':
 
-    #Debug option is for outputting CSV files of the data for comparison purposes
-    debug = False
-    if 'debug' in sys.argv:
-        debug = True
+    #All of these argv are options you can pass to the command line to run certain parts of the file or change behavior of the program.
+    #Typically there is not a need for any argv - calling the program plain will implement default behavior
 
-    dataframe = load_real_data(debug=debug)
+    #Debug option is for outputting CSV files of the data for comparison purposes
+    debug = True if 'debug' in sys.argv else False
+
+    # Pickled data is an option to speed up running the program by not having to access the database every time.
+    # Useful for debugging when you are running the program over and over again.
+    dataframe = load_pickled_data() if 'pickled_data' in sys.argv else load_real_data(debug=debug)
+
+    if 'make_data_pickle' in sys.argv:
+        pickle_dataframe(dataframe)
+
     run_models(dataframe, debug = debug)

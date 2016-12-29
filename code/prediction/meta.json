@@ -1,0 +1,22 @@
+{
+  "target_names": [
+      "in"
+    , "out"
+  ]
+  ,"feature_names": [
+     "t"
+    ,"b"
+    ,"d"
+  ]
+  ,"categorical_features": {
+    "program_type_group_name": [
+        "example"
+      , "program"
+      , "names"
+    ]
+    , "is_hud_administered_ind": [
+        "N"
+      , "Y"
+    ]
+  }
+}
