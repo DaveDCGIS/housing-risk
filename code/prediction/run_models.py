@@ -15,7 +15,7 @@ logging.basicConfig(filename=logging_filename, level=logging.DEBUG)
 #Pushes everything from the logger to the command line output as well.
 #logging.getLogger().addHandler(logging.StreamHandler())
 
-import data_management
+import data_utilities
 
 ##################################################
 #Load the data
@@ -40,14 +40,24 @@ def load_sample_data():
     return data
 
 def load_real_data(debug = False):
-    dataframe = data_management.get_decisions_table(equal_split = True)
+    dataframe = data_utilities.get_decisions_table(equal_split = True)
     if debug == True:
         dataframe.to_csv('before.csv')
 
     return dataframe
 
+def check_array_errors(array):
+
+    #Debugging for the NaN error
+    finite_check = numpy.all(numpy.isfinite(array))
+    nan_check = numpy.any(numpy.isnan(array))
+    print("Finite: {}, NaN: {}".format(finite_check, nan_check))
+    print('bad_indices, inf ', numpy.where(numpy.isinf(array)))
+    print('bad_indices, nan ', numpy.where(numpy.isnan(array)))
+
+
 def run_models(dataframe, debug = False):
-    dataframe = data_management.clean_dataframe(dataframe)
+    dataframe = data_utilities.clean_dataframe(dataframe)
 
     #Move the data into Numpy arrays
     logging.info("Splitting X and y from the data set...")
@@ -55,26 +65,22 @@ def run_models(dataframe, debug = False):
     y = dataframe.iloc[:,0].values
 
     #Implement our pipeline
-    pipe = data_management.get_custom_pipeline()
+    pipe = data_utilities.get_custom_pipeline()
     logging.info("fit_transform our pipeline...")
     X_mod = pipe.fit_transform(X)
-
-    #Debugging for the NaN error
-    finite_check = numpy.all(numpy.isfinite(X_mod))
-    nan_check = numpy.any(numpy.isnan(X_mod))
-    print("Finite: {}, NaN: {}".format(finite_check, nan_check))
 
     #Save the transformed data to a CSV file if desired, to make sure our transformations are working properly
     if debug == True:
         numpy.savetxt("after.csv", X_mod, delimiter=",", fmt='%10.5f')
 
     #Just one split for now
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
+    X_train, X_test, y_train, y_test = train_test_split(X_mod, y, test_size=0.3, random_state=0)
+
 
     ##################################################
     #Set up our ManyModels instance
     ##################################################
-    modeler = data_management.ManyModels()
+    modeler = data_utilities.ManyModels()
 
     #Attach our unfitted model instances to the ManyModels instance
     from sklearn.neighbors import KNeighborsClassifier
