@@ -23,7 +23,8 @@ logging.getLogger().addHandler(logging.StreamHandler())
 
 #Allow modules to import each other at parallel file structure (TODO clean up this configuration in a refactor, it's messy...)
 from inspect import getsourcefile
-import os.path, sys
+import os, sys, json
+
 current_path = os.path.abspath(getsourcefile(lambda:0))
 current_dir = os.path.dirname(current_path)
 parent_dir = current_dir[:current_dir.rfind(os.path.sep)]
@@ -134,6 +135,25 @@ def run_simple_query():
     for query_row in query_result:
         print(query_row['snapshot_id'] + " | " + query_row['table_name'])
 
+def get_meta_data(filepath=None):
+    #default path is meta.json in the same folder as this file
+    if filepath==None:
+        filepath = 'meta.json'
+
+    if os.path.exists(filepath):
+        with open(filepath, 'r') as f:
+            meta = json.load(f)
+        return meta
+    else:
+        raise FileNotFoundError("Couldn't find the file {}!".format(filepath))
+def list_to_dict(list):
+    '''
+    Makes a dictionary. Sets values of a list to the key and index of the list to the value.
+    For use with meta.json so that we can convert to the format that pandas.map function expects
+    '''
+    dict={x:i for i,x in enumerate(list)}
+    return dict
+
 def get_decisions_table(equal_split = False):
     '''
     Queries the database to get our decisions table for training/testing purposes
@@ -153,16 +173,11 @@ def get_decisions_table(equal_split = False):
     #This query will be built on and/or replaced once we get Kashif's SQL query working
     query_text = "select" + """
                         temp.decision
-
                         , rent.hd01_vd01 as median_rent
-
-                        /*, lag(c.contract_term_months_qty,1) over (partition by c.contract_number order by c.snapshot_id) term_mths_lag*/
                         , c.contract_term_months_qty
                         , c.assisted_units_count
-
                         , c.is_hud_administered_ind
-                        , c.program_type_group_name
-
+                        , TRIM(c.program_type_group_name) as program_type_group_name
                         , c.rent_to_FMR_ratio
                         , c."0br_count" br0_count
                         , c."1br_count" br1_count
@@ -210,8 +225,8 @@ def get_custom_pipeline(col_names=None):
     logging.info("Getting a custom pipeline...")
 
     #OneHotEncoder needs True/False on which columns to encode
-    #TODO change this to pull from meta.json
-    categorical_features = {"program_type_group_name": ['example', 'program', 'names'], "is_hud_administered_ind": ['N', 'Y']}
+    meta = get_meta_data()
+    categorical_features = meta['categorical_features']
     mask = [False]*len(col_names)               #Initialize the list to all False
     for index, name in enumerate(col_names):
         if name in categorical_features:
@@ -220,7 +235,6 @@ def get_custom_pipeline(col_names=None):
     from sklearn.preprocessing import StandardScaler, Imputer, LabelEncoder, MinMaxScaler, OneHotEncoder
     from sklearn.pipeline import Pipeline
 
-    #TODO figure out how to use column names instead of numbers (categorical_features = [4] represents 5th column i.e. program_type_group_name)
     pipeline = Pipeline([   ('imputer', Imputer())
                             ,('onehot', OneHotEncoder(categorical_features=mask, sparse=False))
                             ])
@@ -238,37 +252,27 @@ def clean_dataframe(dataframe, debug=False):
     -Conversion of placeholder nulls (e.g. 'N' or '-') to appropriate null values
     -Manual imputation when needed (e.g. converting 2000+ value of median rent to 2000)
 
-
     All the code in this section is custom tailored to the peculiarities of the data formats in our data
     '''
+    logging.info("Cleaning and categorizing the data...")
 
-    logging.info("Cleaning the data...")
+    #Convert all the categorical names to numbers. The complete list of categorical names should be stored in the meta.json file
+    meta = get_meta_data()
+    categorical_features = meta['categorical_features']
+    for column_name in categorical_features:
+        categories = categorical_features[column_name]
+        categories_map = list_to_dict(categories)
+        dataframe[column_name] = dataframe[column_name].map(categories_map)
 
-    if debug == True:
-        dataframe.to_csv('before.csv')
-
-    #TODO change all the categorical encoding to use meta.json as the categorical source (avoids issue w/ LabelEncoder missing some categories, and contains data outside of code)
-    #categorical encoding - method #1
-    decision_mapping = {'in': 1, 'out': 0}
-    dataframe['decision'] = dataframe['decision'].map(decision_mapping)
-    is_mapping = {'Y': 1, 'N': 0} #used for any field that starts with is_
-    dataframe['is_hud_administered_ind'] = dataframe['is_hud_administered_ind'].map(is_mapping)
-
-    #method #2
+    #Replacing string values in rent
     replace_mapping = { 'median_rent': {'-': numpy.nan, '2,000+': 2000}}
     dataframe.replace(to_replace=replace_mapping, inplace=True)
 
-    #method #3
-    from sklearn.preprocessing import LabelEncoder
-    label_encoder_program_name = LabelEncoder()
-    dataframe['program_type_group_name'] = label_encoder_program_name.fit_transform(dataframe['program_type_group_name'])
-
     if debug == True:
-        dataframe.to_csv('after.csv')
+        logging.info("  saving csv of cleaned data")
+        dataframe.to_csv('after_clean.csv')
 
     return dataframe
-
-
 
 if __name__ == '__main__':
     dataframe = get_decisions_table(equal_split = True)

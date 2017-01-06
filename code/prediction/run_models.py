@@ -47,7 +47,8 @@ def load_real_data(debug = False):
 
     return dataframe
 
-def load_pickled_data():
+def load_data_pickle():
+    logging.info("Loading from pickle...")
     with open('dataframe.pickle', 'rb') as f:
         return pickle.load(f)
 
@@ -74,7 +75,7 @@ def check_array_errors(array):
 
 def run_models(dataframe, debug = False):
 
-    dataframe = data_utilities.clean_dataframe(dataframe)
+    dataframe = data_utilities.clean_dataframe(dataframe, debug = debug)
 
     #Move the data into Numpy arrays - some pipeline methods require Numpy so cleaner to convert explicitly up front instead of passing in the dataframe
     logging.info("Splitting X and y from the data set...")
@@ -84,7 +85,7 @@ def run_models(dataframe, debug = False):
     X_names = col_names[1:]
 
     #Just one split for now
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=10)
 
     #Implement our pipeline
     pipe = data_utilities.get_custom_pipeline(col_names = X_names)
@@ -94,7 +95,7 @@ def run_models(dataframe, debug = False):
 
     #Save the transformed data to a CSV file if desired, to make sure our transformations are working properly
     if debug == True:
-        numpy.savetxt("after.csv", X_train, delimiter=",", fmt='%10.5f')
+        numpy.savetxt("after_pipeline_train.csv", X_train, delimiter=",", fmt='%10.5f')
 
 
     ##################################################
@@ -147,7 +148,7 @@ if __name__ == '__main__':
 
     # Pickled data is an option to speed up running the program by not having to access the database every time.
     # Useful for debugging when you are running the program over and over again.
-    dataframe = load_pickled_data() if 'pickled_data' in sys.argv else load_real_data(debug=debug)
+    dataframe = load_data_pickle() if 'use_data_pickle' in sys.argv else load_real_data(debug=debug)
 
     if 'make_data_pickle' in sys.argv:
         pickle_dataframe(dataframe)
