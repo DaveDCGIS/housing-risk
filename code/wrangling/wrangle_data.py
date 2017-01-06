@@ -20,7 +20,6 @@ sys.path.insert(0, parent_dir)
 
 #Database stuff
 import database_management
-
 import sqlalchemy
 
 #############################

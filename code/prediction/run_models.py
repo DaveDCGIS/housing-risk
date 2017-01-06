@@ -6,7 +6,6 @@ import pandas
 import sklearn
 from sklearn import metrics
 from sklearn.model_selection import train_test_split
-
 import pipeline
 
 ##################################################
@@ -86,8 +85,13 @@ def run_models(data):
     pp = pprint.PrettyPrinter()
     print("Model performance:")
     pp.pprint(modeler.scores)
+	
+     import data_visual
+     data_visual.run_cool_plot(modeler)
 
+	
 
 if __name__ == '__main__':
     data = load_real_data()
     run_models(data)
+	make_cool_plot(modeler)
