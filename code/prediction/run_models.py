@@ -8,7 +8,6 @@ from sklearn import metrics
 from sklearn.model_selection import train_test_split
 import sys
 import pickle
-
 #Configure logging. See /logs/example-logging.py for examples of how to use this.
 import logging
 logging_filename = "../logs/pipeline.log"
@@ -122,8 +121,9 @@ def run_models(dataframe, debug = False):
     pp = pprint.PrettyPrinter()
     print("Model performance:")
     pp.pprint(modeler.scores)
-
+	
     return modeler
+	
 
 if __name__ == '__main__':
 
