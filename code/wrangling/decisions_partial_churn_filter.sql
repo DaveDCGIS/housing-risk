@@ -22,7 +22,7 @@ FROM	(
   SELECT contract_number, MIN(tracs_overall_expiration_date) AS earliest_expiration
     FROM contracts
     GROUP BY contract_number
-    LIMIT 1000
+    LIMIT 2000
   ) AS random_unsorted
 ORDER BY earliest_expiration
 )

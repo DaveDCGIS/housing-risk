@@ -1,0 +1,41 @@
+{
+  "target_names": [
+      "in"
+    , "out"
+  ]
+  ,"feature_names": [
+     "t"
+    ,"b"
+    ,"d"
+  ]
+  ,"categorical_features": {
+        "decision": [
+          "in"
+          ,"out"
+        ]
+        , "program_type_group_name": [
+         "811 PRA Demo"
+        ,"Other S8 New"
+        ,"Other S8 Rehab"
+        ,"PAC 202/811"
+        ,"Pension Fund"
+        ,"PRAC 202/811"
+        ,"Rent Supplement"
+        ,"S8 FmHA"
+        ,"S8 Loan Mgmt"
+        ,"S8 Preservation"
+        ,"S8 Prop. Disp."
+        ,"S8 RAD Mod Rehab Con"
+        ,"S8 RAD PH Conv"
+        ,"S8 State Agency"
+        ,"Sec. 202"
+        ,"Sec. 236 RAP"
+        ,"Service Coordinator"
+        ,"Unknown"
+        ]
+        , "is_hud_administered_ind": [
+            "N"
+          , "Y"
+        ]
+  }
+}
