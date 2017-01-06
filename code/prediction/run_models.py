@@ -21,27 +21,14 @@ import data_utilities
 ##################################################
 #Load the data
 ##################################################
-def load_sample_data():
-    data = pandas.read_csv('./wine_data/wine.data', header=None)
-    data.columns = ['Class'
-                    , 'Alcohol'
-                    , 'Malic acid'
-                    , 'Ash'
-                    , 'Alcalinity of ash'
-                    , 'Magnesium'
-                    , 'Total phenols'
-                    , 'Flavanoids'
-                    , 'Nonflavanoid phenols'
-                    , 'Proanthocyanins'
-                    , 'Color intensity'
-                    , 'Hue'
-                    , 'OD280/OD315 of diluted wines'
-                    , 'Proline'
-                    ]
-    return data
-
 def load_real_data(debug = False):
     dataframe = data_utilities.get_decisions_table(equal_split = True)
+    if debug == True:
+        dataframe.to_csv('before.csv')
+    return dataframe
+
+def load_sample_data(debug = False):
+    dataframe = data_utilities.get_sample_decisions_table(equal_split = True)
     if debug == True:
         dataframe.to_csv('before.csv')
 
@@ -146,9 +133,18 @@ if __name__ == '__main__':
     #Debug option is for outputting CSV files of the data for comparison purposes
     debug = True if 'debug' in sys.argv else False
 
+    # Must use one of the below options to get the right data into the dataframe:
+        # use_data_pickle
+        # use_sample
+        # use_real
     # Pickled data is an option to speed up running the program by not having to access the database every time.
     # Useful for debugging when you are running the program over and over again.
-    dataframe = load_data_pickle() if 'use_data_pickle' in sys.argv else load_real_data(debug=debug)
+    if 'use_data_pickle' in sys.argv:
+        dataframe = load_data_pickle()
+    if 'use_sample' in sys.argv:
+        dataframe = load_sample_data(debug=debug)
+    if 'use_real' in sys.argv:
+        dataframe = load_real_data(debug=debug)
 
     if 'make_data_pickle' in sys.argv:
         pickle_dataframe(dataframe)

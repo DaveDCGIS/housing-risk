@@ -155,8 +155,11 @@ def list_to_dict(list):
     return dict
 
 def get_decisions_table(equal_split = False):
+    logging.info("*************Real query not yet implemented!*************")
+
+def get_sample_decisions_table(equal_split = False):
     '''
-    Queries the database to get our decisions table for training/testing purposes
+    Queries the database to get a small version of our decisions table for training/testing purposes
     '''
 
     logging.info("Getting the data from the database...")
@@ -275,5 +278,5 @@ def clean_dataframe(dataframe, debug=False):
     return dataframe
 
 if __name__ == '__main__':
-    dataframe = get_decisions_table(equal_split = True)
+    dataframe = get_sample_decisions_table(equal_split = True)
     dataframe = clean_dataframe(dataframe, debug=True)
