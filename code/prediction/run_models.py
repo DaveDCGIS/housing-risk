@@ -102,6 +102,7 @@ def run_models(dataframe, debug = False):
     #Attach training data
     modeler.X = X_train
     modeler.y = y_train
+    modeler.y_names = data_utilities.get_meta_data()["categorical_features"]["decision"]
 
     #We can call fit in 3 different ways depending on our needs.
     modeler.fit("RandomForestClassifier")    #fit just one model
@@ -121,9 +122,9 @@ def run_models(dataframe, debug = False):
     pp = pprint.PrettyPrinter()
     print("Model performance:")
     pp.pprint(modeler.scores)
-	
+
     return modeler
-	
+
 
 if __name__ == '__main__':
 
@@ -139,7 +140,7 @@ if __name__ == '__main__':
         # use_real
     # Pickled data is an option to speed up running the program by not having to access the database every time.
     # Useful for debugging when you are running the program over and over again.
-    if 'use_data_pickle' in sys.argv:
+    if 'use_pickle' in sys.argv:
         dataframe = load_data_pickle()
     if 'use_sample' in sys.argv:
         dataframe = load_sample_data(debug=debug)

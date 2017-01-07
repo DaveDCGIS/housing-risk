@@ -63,6 +63,8 @@ class ManyModels:
 
         self.X_test = None
         self.y_test = None
+        self.y_names = []
+
 
     #@property lets us add additional logic to the getters and setters for the X_test property (e.g., resetting the answers and scores)
     @property
@@ -106,6 +108,9 @@ class ManyModels:
                 self.scores[key]['recall'] = round(metrics.recall_score(y_true = self.y_test, y_pred=self.answers[key], average="weighted"),4)
                 self.scores[key]['accuracy'] = round(metrics.accuracy_score(y_true = self.y_test, y_pred=self.answers[key]),4)
                 self.scores[key]['f1'] = round(metrics.f1_score(y_true = self.y_test, y_pred=self.answers[key], average="weighted"),4)
+                #self.scores[key]['classification_report'] = classification_report(self.y_test, self.answers[key].as_matrix())
+                #TODO MAKE SURE ABOVE IS CORRECT
+
 
         return self.answers
 
