@@ -106,9 +106,9 @@ def run_models(dataframe, debug = False):
                       }
 
     for i in range(3,13):
-        modeler.models["KNeighborsClassifier_{}".format(i)]: sklearn.neighbors.KNeighborsClassifier(n_neighbors=i)
+        modeler.models["KNeighborsClassifier_{}".format(i)] = sklearn.neighbors.KNeighborsClassifier(n_neighbors=i)
     #TODO - add the kneighbors classifeirs for each ID, check this is working
-        
+
     #Attach training data
     modeler.X = X_train
     modeler.y = y_train

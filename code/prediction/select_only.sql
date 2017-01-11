@@ -16,11 +16,11 @@ select
     , c.program_type_name
     , c.program_type_group_name
     , c.rent_to_FMR_ratio
-    , c."0br_fmr" br0_fmr
-    , c."1br_fmr" br1_fmr
-    , c."2br_fmr" br2_fmr
-    , c."3br_fmr" br3_fmr
-    , c."4br_fmr" br4_fmr
+  --, c."0br_fmr" br0_fmr
+  --, c."1br_fmr" br1_fmr
+  --, c."2br_fmr" br2_fmr
+  --, c."3br_fmr" br3_fmr
+  --, c."4br_fmr" br4_fmr
     , c."0br_count" br0_count
     , c."1br_count" br1_count
     , c."2br_count" br2_count

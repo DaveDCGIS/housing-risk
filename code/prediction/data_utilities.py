@@ -160,23 +160,34 @@ def list_to_dict(list):
     return dict
 
 def get_decisions_table(equal_split = False):
-    logging.info("*************Real query not yet implemented!*************")
+    '''
+    Queries the database to get our full decisions table
+    '''
+
+    logging.info("Getting the decisions data from the database...")
+    # Open and read the SQL command file as a single buffer
+    database_connection = database_management.get_database_connection('database')
+    query_path = parent_dir + "\wrangling\decisions_partial_churn_filter.sql"
+    file = open(query_path, 'r')
+    query_text = file.read()
+    file.close()
+
+    query_dataframe = pandas.read_sql(query_text, database_connection)
+
+    return query_dataframe
 
 def get_sample_decisions_table(equal_split = False):
     '''
     Queries the database to get a small version of our decisions table for training/testing purposes
     '''
-
-    logging.info("Getting the data from the database...")
-    #Connect to the database
-    database_connection = database_management.get_database_connection('database')
-    query_result = database_connection.execute("select snapshot_id, table_name from manifest where snapshot_id='c2005-07'")
+    logging.info("Getting the sample data from the database...")
 
     # Open and read the SQL command file as a single buffer
+    database_connection = database_management.get_database_connection('database')
     query_path = parent_dir + "\wrangling\decisions_partial_churn_filter.sql"
-    fd = open(query_path, 'r')
-    sqlFile = fd.read()
-    fd.close()
+    file = open(query_path, 'r')
+    query_file_text = file.read()
+    file.close()
 
     #This query will be built on and/or replaced once we get Kashif's SQL query working
     query_text = "select" + """
@@ -193,7 +204,7 @@ def get_sample_decisions_table(equal_split = False):
                         , c."3br_count" br3_count
                         , c."4br_count" br4_count
                         , c."5plusbr_count" br5_count
-                        """ + "from (" + sqlFile +  """
+                        """ + "from (" + query_file_text +  """
                                 ) as temp
                 inner join contracts as c
                 on c.contract_number = temp.contract_number and c.snapshot_id = temp.snapshot_id
@@ -203,6 +214,11 @@ def get_sample_decisions_table(equal_split = False):
                 on g.geoid::text = rent.geo_id2::text
 
                 where churn_flag<>'churn'
+
+                --need to match to closest rent TODO
+                and rent.snapshot_id = 'ACS_14_5YR_B25058_with_ann.csv'
+
+                
                 """
     both_in_out = " and decision in ('in', 'out')"
     just_in = " and decision in ('in')"
