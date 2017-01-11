@@ -14,6 +14,7 @@ Starting point for running our models.
 import logging
 import numpy, pandas
 from sklearn import metrics
+from sklearn.metrics import classification_report
 
 #Configure logging. See /logs/example-logging.py for examples of how to use this.
 logging_filename = "../logs/pipeline.log"
@@ -108,8 +109,7 @@ class ManyModels:
                 self.scores[key]['recall'] = round(metrics.recall_score(y_true = self.y_test, y_pred=self.answers[key], average="weighted"),4)
                 self.scores[key]['accuracy'] = round(metrics.accuracy_score(y_true = self.y_test, y_pred=self.answers[key]),4)
                 self.scores[key]['f1'] = round(metrics.f1_score(y_true = self.y_test, y_pred=self.answers[key], average="weighted"),4)
-                #self.scores[key]['classification_report'] = classification_report(self.y_test, self.answers[key].as_matrix())
-                #TODO MAKE SURE ABOVE IS CORRECT
+                self.scores[key]['classification_report'] = classification_report(y_true = self.y_test, y_pred = self.answers[key].as_matrix(), target_names=self.y_names)
 
 
         return self.answers

@@ -93,12 +93,22 @@ def run_models(dataframe, debug = False):
     from sklearn.neighbors import KNeighborsClassifier
     from sklearn.ensemble import RandomForestClassifier
     from sklearn.linear_model import LogisticRegression
-    modeler.models = {"KNeighborsClassifier_6": sklearn.neighbors.KNeighborsClassifier(n_neighbors=6)
-                      , "KNeighborsClassifier_12": sklearn.neighbors.KNeighborsClassifier(n_neighbors=12)
+    from sklearn.naive_bayes import GaussianNB
+    from sklearn.svm import SVC
+
+    modeler.models = {    "KNeighborsClassifier_default": sklearn.neighbors.KNeighborsClassifier()
                       , "RandomForestClassifier": sklearn.ensemble.RandomForestClassifier()
                       , "LogisticRegression": sklearn.linear_model.LogisticRegression(penalty='l1', C=0.1)
-                     }
+                      , "SVC_rbf": SVC(kernel = 'rbf', probability = True, random_state = 0)
+                      #these are both processing very slow - excluding for now
+                     #  , "SVC_linear": SVC(kernel = 'linear', probability = True,  random_state = 0)
+                     #  , "SVC_poly": SVC(kernel = 'poly', degree = 3, probability = True,  random_state = 0)
+                      }
 
+    for i in range(3,13):
+        modeler.models["KNeighborsClassifier_{}".format(i)]: sklearn.neighbors.KNeighborsClassifier(n_neighbors=i)
+    #TODO - add the kneighbors classifeirs for each ID, check this is working
+        
     #Attach training data
     modeler.X = X_train
     modeler.y = y_train
@@ -125,6 +135,10 @@ def run_models(dataframe, debug = False):
 
     return modeler
 
+def print_classification_reports(modeler):
+    for key in modeler.models:
+        logging.info("{} Classification Report".format(key))
+        logging.info(modeler.scores[key]['classification_report'])
 
 if __name__ == '__main__':
 
@@ -150,4 +164,7 @@ if __name__ == '__main__':
     if 'make_data_pickle' in sys.argv:
         pickle_dataframe(dataframe)
 
-    run_models(dataframe, debug = debug)
+    modeler = run_models(dataframe, debug = debug)
+
+    #temporary tests for current dev stuff:
+    print_classification_reports(modeler)
