@@ -9,9 +9,9 @@ as
 --Choose which tests we want to use to create decisions
 /*
 previous_churn_decisions:  Number of times there was previously an 'out' decision that was reverted
-dec1, 	 When previous max_d was out (1) and current max_d is in (2), add an 'X'
+churn_flag, 	 When previous most_recent_decision was out (1) and current most_recent_decision is in (2), add an 'X'
 previous_contract_term_months_qty, variable name explains it
-max_d, ???
+most_recent_decision, ???
 cnt_d, Total count of the number of times the contract duration has changed
 in_out_dec_cnt, Total count of decisions that have occurred, either direction, over the whole life of the contract
 in_out_dec_flg, 1='out', 2='in' in the decision column
@@ -19,15 +19,26 @@ term_mths_diff_flg, 'X' when the previous contract term is not the same as curre
 decision, 'in', 'out', 'suspicious', or 'first' depending on the decision_tests
 */
 
-select count( dec1 ) over ( partition by contract_number ) as previous_churn_decisions
-       , d.* from (
-select case when lag ( max_d ) over ( partition by contract_number order by snapshot_id ) = 1 and max_d = 2 then 'X' end as dec1,
-first_value (term_mths_lag) over ( partition by contract_number, contract_term_months_qty, cnt_d 
-                                       order by snapshot_id RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING ) as previous_contract_term_months_qty
+select count( churn_flag ) over ( partition by contract_number ) as previous_churn_decisions
+       , d.*
+       from (
+            select
+              case when
+                --'X' is an indicator of a churn decision
+                  lag ( most_recent_decision ) over ( partition by contract_number order by snapshot_id ) = 1
+                  and most_recent_decision = 2 then 'X'
+                  end as churn_flag
+
+              , first_value (term_mths_lag)
+                    over ( partition by contract_number, contract_term_months_qty, cnt_d
+                          order by snapshot_id RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING )
+                as previous_contract_term_months_qty
        , c.*
-from (
---Pick the max
-select max ( in_out_dec_flg) over ( partition by contract_number, in_out_dec_cnt order by snapshot_id ) max_d,
+          from (
+          select max ( in_out_dec_flg)
+          over ( partition by contract_number, in_out_dec_cnt order by snapshot_id )
+          most_recent_decision
+          ,
 --Count the number of instances where there.
        count (term_mths_diff_flg) over (partition by contract_number order by snapshot_id) as cnt_d, b.*
 from (
@@ -79,26 +90,30 @@ SELECT
     , coalesce (case when c.assisted_units_count = 0 then null else (c."3br_count" / c.assisted_units_count) end, 0) as br3_perc
     , coalesce (case when c.assisted_units_count = 0 then null else (c."4br_count" / c.assisted_units_count) end, 0) as br4_perc
     , coalesce (case when c.assisted_units_count = 0 then null else (c."5plusbr_count" / c.assisted_units_count) end, 0) as br5_perc
---     , null average_bedroom_count
---     , null neighborhood_median_rent
---     , null neighborhood_lower_quartile_rent
---     , null neighbohood_upper_quartile_rent
+
 --     , ( select round ( ( first_value (est_rent) over ( partition by geo_id2 order by year desc)
 --              - first_value (est_rent) over ( partition by geo_id2 order by year asc) ) / first_value (est_rent)
 -- 			 over ( partition by geo_id2 order by year asc)*100, 2) as diff
 --   from (
--- 		select case when c.snapshot_id = 	'ACS_09_5YR_B25058_with_ann.csv' then 2009
--- 					when c.snapshot_id = 'ACS_10_5YR_B25058_with_ann.csv' then 2010
--- 					when c.snapshot_id = 'ACS_11_5YR_B25058_with_ann.csv' then 2011
--- 					when c.snapshot_id = 'ACS_12_5YR_B25058_with_ann.csv' then 2012
--- 					when c.snapshot_id = 'ACS_13_5YR_B25058_with_ann.csv' then 2013
--- 					when c.snapshot_id = 'ACS_14_5YR_B25058_with_ann.csv' then 2014
--- 			   end as year, a.geo_id2, a."geo_display-label" as display, cast (a.hd01_vd01 as numeric) est_rent, hd02_vd01 margin_of_error
--- 		  from acs_rent_median a, geocode g
--- 		 where a.geo_id2 = trim (cast (g.geoid as text)) 
+-- 		select
+--          case when c.snapshot_id = 	'ACS_09_5YR_B25058_with_ann.csv' then 2009
+  -- 					when c.snapshot_id = 'ACS_10_5YR_B25058_with_ann.csv' then 2010
+  -- 					when c.snapshot_id = 'ACS_11_5YR_B25058_with_ann.csv' then 2011
+  -- 					when c.snapshot_id = 'ACS_12_5YR_B25058_with_ann.csv' then 2012
+  -- 					when c.snapshot_id = 'ACS_13_5YR_B25058_with_ann.csv' then 2013
+  -- 					when c.snapshot_id = 'ACS_14_5YR_B25058_with_ann.csv' then 2014
+  -- 			  end as year
+--        , a.geo_id2
+--        , a."geo_display-label" as display
+--        , cast (a.hd01_vd01 as numeric) est_rent
+--        , hd02_vd01 margin_of_error
+-- 		 from acs_rent_median a, geocode g
+-- 		 where a.geo_id2 = trim (cast (g.geoid as text))
 -- 		   and g.property_id = c.property_id limit 1 --Needs to be changed!!!!! Join to geocode.
 --         ) b )
 --      as percent_increase_neighborhood_median_rent
+
+
 --     , ( select round (( first_value (est_rent) over ( partition by geo_id2 order by year desc)
 --              - first_value (est_rent) over ( partition by geo_id2 order by year asc) ) / first_value (est_rent)
 -- 			 over ( partition by geo_id2 order by year asc)*100, 2) as diff
@@ -113,6 +128,7 @@ SELECT
 -- 		  from acs_rent_upper a
 -- 		 where geo_Id2 = '01001020100'
 -- 		) b )
+
 --    , null as percent_increase_neighborhood_upper_rent
 --     , ( select round (( first_value (est_rent) over ( partition by geo_id2 order by year desc)
 --                - first_value (est_rent) over ( partition by geo_id2 order by year asc) ) / first_value (est_rent)
@@ -129,6 +145,7 @@ SELECT
 -- 		 where geo_Id2 = '01001020100'
 -- 		) b )
 --     , null as percent_increase_neighborhood_lower_rent
+
 --     , null ratio_neighborhood_median_to_gross_rent
 --     , null ratio_neighborhood_lower_to_gross_rent
 --     , null ratio_neighborhood_upper_to_gross_rent
