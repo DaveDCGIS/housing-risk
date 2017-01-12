@@ -52,6 +52,26 @@ class ManyModels:
 
     Not optimized for memory use - instead it is designed for as much flexibility and access to source data,
     models, and prediction performance as possible for use in a learning context.
+
+    Example Use:
+        #set it up:
+        modeler = ManyModels()
+        modeler.models = {} #change this to a dictionary of model instances
+        modeler.X = X_train
+        modeler.y = y_train
+        modeler.y_names = ['A','B']
+
+        #Fit:
+        modeler.fit("RandomForestClassifier")    #fit just one model
+        modeler.fit(model_list=['KNeighborsClassifier_12', 'RandomForestClassifier'])   #fit a list of models
+        modeler.fit() #fits all models
+
+        #Attach testing data
+        modeler.X_test = X_test
+        modeler.y_test = y_test
+
+        #Predict:
+        predicted_df = modeler.predict()  #returns a dataframe of the predicted answers for each model, but also stores the fitted models on the modeler object
     '''
 
     def __init__(self):
@@ -162,12 +182,13 @@ def list_to_dict(list):
 def get_decisions_table(equal_split = False):
     '''
     Queries the database to get our full decisions table
+    equal_split not implemented
     '''
 
     logging.info("Getting the decisions data from the database...")
     # Open and read the SQL command file as a single buffer
     database_connection = database_management.get_database_connection('database')
-    query_path = parent_dir + "\wrangling\decisions_partial_churn_filter.sql"
+    query_path = "select_decisions_data.sql"
     file = open(query_path, 'r')
     query_text = file.read()
     file.close()
@@ -178,6 +199,7 @@ def get_decisions_table(equal_split = False):
 
 def get_sample_decisions_table(equal_split = False):
     '''
+    Deprecated - Superseded by get_decisions_table now that it is working.
     Queries the database to get a small version of our decisions table for training/testing purposes
     '''
     logging.info("Getting the sample data from the database...")
@@ -218,7 +240,7 @@ def get_sample_decisions_table(equal_split = False):
                 --need to match to closest rent TODO
                 and rent.snapshot_id = 'ACS_14_5YR_B25058_with_ann.csv'
 
-                
+
                 """
     both_in_out = " and decision in ('in', 'out')"
     just_in = " and decision in ('in')"
@@ -289,7 +311,7 @@ def clean_dataframe(dataframe, debug=False):
         dataframe[column_name] = dataframe[column_name].map(categories_map)
 
     #Replacing string values in rent
-    replace_mapping = { 'median_rent': {'-': numpy.nan, '2,000+': 2000}}
+    replace_mapping = { 'median_rent': {'-': numpy.nan,'100-': 100, '2,000+': 2000}}
     dataframe.replace(to_replace=replace_mapping, inplace=True)
 
     if debug == True:
@@ -299,5 +321,7 @@ def clean_dataframe(dataframe, debug=False):
     return dataframe
 
 if __name__ == '__main__':
-    dataframe = get_sample_decisions_table(equal_split = True)
-    dataframe = clean_dataframe(dataframe, debug=True)
+    dataframe = get_decisions_table()
+    print(dataframe.head())
+    dataframe = clean_dataframe(dataframe, debug=False)
+    print(dataframe.head())

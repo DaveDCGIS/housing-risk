@@ -21,7 +21,7 @@ import data_utilities
 #Load the data
 ##################################################
 def load_real_data(debug = False):
-    dataframe = data_utilities.get_decisions_table(equal_split = True)
+    dataframe = data_utilities.get_decisions_table()
     if debug == True:
         dataframe.to_csv('before.csv')
     return dataframe
@@ -59,7 +59,7 @@ def check_array_errors(array):
     print('bad_indices, nan ', numpy.where(numpy.isnan(array)))
 
 
-def run_models(dataframe, debug = False):
+def run_models(dataframe, models_to_run = {}, debug = False):
 
     dataframe = data_utilities.clean_dataframe(dataframe, debug = debug)
 
@@ -96,8 +96,8 @@ def run_models(dataframe, debug = False):
     from sklearn.naive_bayes import GaussianNB
     from sklearn.svm import SVC
 
-    modeler.models = {    "KNeighborsClassifier_default": sklearn.neighbors.KNeighborsClassifier()
-                      , "RandomForestClassifier": sklearn.ensemble.RandomForestClassifier()
+    modeler.models = {    "KNeighbors_default": sklearn.neighbors.KNeighborsClassifier()
+                      , "RandomForest": sklearn.ensemble.RandomForestClassifier()
                       , "LogisticRegression": sklearn.linear_model.LogisticRegression(penalty='l1', C=0.1)
                       , "SVC_rbf": SVC(kernel = 'rbf', probability = True, random_state = 0)
                       #these are both processing very slow - excluding for now
@@ -105,40 +105,39 @@ def run_models(dataframe, debug = False):
                      #  , "SVC_poly": SVC(kernel = 'poly', degree = 3, probability = True,  random_state = 0)
                       }
 
-    for i in range(3,13):
-        modeler.models["KNeighborsClassifier_{}".format(i)] = sklearn.neighbors.KNeighborsClassifier(n_neighbors=i)
-    #TODO - add the kneighbors classifeirs for each ID, check this is working
+    #TODO need to get the true/false dictionary of models_to_run to handle this appropriately.
+    #for i in range(3,13):
+    #    modeler.models["KNeighborsClassifier_{}".format(i)] = sklearn.neighbors.KNeighborsClassifier(n_neighbors=i)
 
     #Attach training data
     modeler.X = X_train
     modeler.y = y_train
     modeler.y_names = data_utilities.get_meta_data()["categorical_features"]["decision"]
 
-    #We can call fit in 3 different ways depending on our needs.
-    modeler.fit("RandomForestClassifier")    #fit just one model
-    modeler.fit(model_list=['KNeighborsClassifier_12', 'RandomForestClassifier'])   #fit a list of models
-    modeler.fit() #fits all models
+    #Convert our true/false dictionary into a list.
+    #TODO would be good to add a dictionary of true/false as another way to pass models to run.
+    model_list = []
+    for key in models_to_run:
+        if models_to_run[key] == True:
+            model_list.append(key)
+    logging.info("Running models: {}".format(str(model_list)))
+    modeler.fit(model_list=model_list)
 
-    #Attach testing data
+    #Attach testing data and create predictions (also calculates scores)
     modeler.X_test = X_test
     modeler.y_test = y_test
-
-    #run all models. This method also allows single entries or a list if desired
-    predicted_df = modeler.predict()
-
-    #If there is a y_test attached, the predict() method automatically calculates the scores
-    #using PrettyPrinter because modeler.scores is a nested dictionary
-    import pprint
-    pp = pprint.PrettyPrinter()
-    print("Model performance:")
-    pp.pprint(modeler.scores)
+    predicted_df = modeler.predict(model_list)
 
     return modeler
 
-def print_classification_reports(modeler):
-    for key in modeler.models:
-        logging.info("{} Classification Report".format(key))
-        logging.info(modeler.scores[key]['classification_report'])
+def print_classification_reports(modeler, models_to_run = {}):
+    logging.info("-"*45)
+    logging.info("Model Performance:")
+    logging.info("-"*45)
+    for key in models_to_run:
+        if models_to_run[key] == True:
+            logging.info("{} Classification Report".format(key))
+            logging.info(modeler.scores[key]['classification_report'])
 
 if __name__ == '__main__':
 
@@ -164,7 +163,22 @@ if __name__ == '__main__':
     if 'make_data_pickle' in sys.argv:
         pickle_dataframe(dataframe)
 
-    modeler = run_models(dataframe, debug = debug)
+    #Use argument variables to decide which of our models to run this time. Each one can be passed as a separate argument variable, or use 'all' to run them all
+    #Initialze with no models running
+    models_to_run = {
+        'KNeighbors_default': False,
+        'RandomForest': False,
+        'LogisticRegression': False,
+        'SVC_rbf':False
+    }
+    if 'all' in sys.argv:
+        for key in models_to_run:
+            models_to_run[key] = True
+    for arg in sys.argv:
+        if arg in models_to_run:
+            models_to_run[arg] = True
+
+    modeler = run_models(dataframe, models_to_run, debug = debug)
 
     #temporary tests for current dev stuff:
-    print_classification_reports(modeler)
+    print_classification_reports(modeler, models_to_run)

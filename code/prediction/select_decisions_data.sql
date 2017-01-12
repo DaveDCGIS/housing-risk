@@ -1,43 +1,50 @@
 
-/*
-select
-	expiration_extended_test
-	, status_test
-	, expiration_passed_test
-	--useful data for QA on decisions
-	, tracs_overall_expiration_date
-	, previous_expiration_date
-	, time_diff
-	, tracs_status_name
-	, previous_status
-    , null churn_decisions_per_year
-    , c.assisted_units_count
-    , c.is_hud_administered_ind
-    , c.is_acc_old_ind
-    , c.is_acc_performance_based_ind
-    , c.program_type_name
-    , c.program_type_group_name
-    , c.rent_to_FMR_ratio
-    , c."0br_count" br0_count
-    , c."1br_count" br1_count
-    , c."2br_count" br2_count
-    , c."3br_count" br3_count
-    , c."4br_count" br4_count
-    , c."5plusbr_count" br5_count
-FROM decisions_tests
-INNER JOIN contracts c
-ON decisions_tests.contract_number = c.contract_number
-AND decisions_tests.snapshot_id = c.snapshot_id
+/*stuff to add in:
+--??inc?
+, previous_expiration_date
+
+, cast (null as integer) previous_churn_decisions
+ , null churn_decisions_per_year
+ , d.term_mths_lag as previous_contract_term_months
+ , c.is_acc_old_ind
+ , c.is_acc_performance_based_ind
+ , c.rent_to_FMR_ratio
+
+ , null rent_gross_amount_per_unit
+ , null average_bedroom_count
+ , null neighborhood_median_rent
+ , null neighborhood_lower_quartile_rent
+ , null neighbohood_upper_quartile_rent
+
+
+ , null as percent_increase_neighborhood_median_rent
+ , null as percent_increase_neighborhood_upper_rent
+ , null as percent_increase_neighborhood_lower_rent
+
+ , null ratio_neighborhood_median_to_gross_rent
+ , null ratio_neighborhood_lower_to_gross_rent
+ , null ratio_neighborhood_upper_to_gross_rent
+
 */
 
 -------------------------------------
 SELECT
         d.decision
-        --Extra identifying information for troubeshooting, not training
-        , EXTRACT(YEAR FROM manifest.date) AS decision_data_year
-        , rent.snapshot_id
-        , c.snapshot_id
+        
+        /*
+        --remove this stuff from the query before training (just for debugging)
+         EXTRACT(YEAR FROM manifest.date) AS decision_data_year
+         ,case when (EXTRACT(YEAR FROM manifest.date)::INTEGER) = 2016 then 2015
+          else (EXTRACT(YEAR FROM manifest.date)::INTEGER)
+         end as altered_decision_data_year
+        , rent.snapshot_id as rent_snapshot_id
+        , c.snapshot_id as contract_snapshot_id
         , c.contract_number
+        , p.state_code
+        , p.city_name_text
+        , g.geoid
+        , rent.geo_id2
+        */
         
         --Data we want
         , rent.hd01_vd01 AS median_rent
@@ -53,28 +60,62 @@ SELECT
         , c."4br_count" br4_count
         , c."5plusbr_count" br5_count
 
+        --these are in the 'decisions' table because they are calculated, even though they do not change per contract.
+        /*excluding for now because we need to keep these out of the test data so that we can get all DC buildings regardless of whether they have had a decision
+        , d.br0_perc
+        , d.br1_perc
+        , d.br2_perc
+        , d.br3_perc
+        , d.br4_perc
+        , d.br5_perc
+        */
+     
+--primary opening FROM statement, for use when making train/test data   
 FROM decisions AS d
-LEFT JOIN contracts AS c
+LEFT JOIN
+contracts AS c
 ON c.contract_number = d.contract_number AND c.snapshot_id = d.snapshot_id
+
+/*
+--Alternative opening from statement when using to pull test data
+FROM contracts AS c
+*/
+LEFT JOIN properties AS p
+ON c.property_id = p.property_id AND SUBSTRING(c.snapshot_id FROM 2) = SUBSTRING(p.snapshot_id FROM 2)
 
 LEFT JOIN geocode AS g
 ON c.property_id = g.property_id
 
-LEFT JOIN manifest 
+LEFT JOIN manifest
 ON manifest.snapshot_id = c.snapshot_id
 
 
 LEFT JOIN acs_rent_median AS rent
-ON g.geoid::TEXT = rent.geo_id2::TEXT AND (EXTRACT(YEAR FROM manifest.date)::INTEGER) = 
+ON g.geoid::TEXT = rent.geo_id2::TEXT 
+    AND 
+    --match the timing of the contract snapshot to the relevant year of rent data. Allow 2016 to use the most recently available data. 
+    (CASE WHEN (EXTRACT(YEAR FROM manifest.date)::INTEGER) = 2016 THEN 2014 --TODO change this to 2015 when new data is uploaded
+          ELSE (EXTRACT(YEAR FROM manifest.date)::INTEGER)
+     END)
+    =
     (CASE WHEN rent.snapshot_id = 	'ACS_09_5YR_B25058_with_ann.csv' THEN 2009
    					WHEN rent.snapshot_id = 'ACS_10_5YR_B25058_with_ann.csv' THEN 2010
    					WHEN rent.snapshot_id = 'ACS_11_5YR_B25058_with_ann.csv' THEN 2011
    					WHEN rent.snapshot_id = 'ACS_12_5YR_B25058_with_ann.csv' THEN 2012
    					WHEN rent.snapshot_id = 'ACS_13_5YR_B25058_with_ann.csv' THEN 2013
    					WHEN rent.snapshot_id = 'ACS_14_5YR_B25058_with_ann.csv' THEN 2014
+   					WHEN rent.snapshot_id = 'ACS_15_5YR_B25058_with_ann.csv' THEN 2015
    			  END
 )::INTEGER
 
+
 WHERE d.decision IN ('in', 'out')
 AND d.churn_flag IS NULL
+AND rent.snapshot_id IS NOT NULL --skip years with no rent data
 
+/*
+--Alternate where statement to use when just getting current DC data 
+where p.state_code ILIKE 'DC'
+AND c.snapshot_id = 'c2016-08'
+AND rent.snapshot_id is not null
+*/

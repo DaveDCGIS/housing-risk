@@ -8,11 +8,11 @@ SELECT
     , *
  FROM (
     SELECT
-          decisions.decision AS decision_copy
-          ,LEAD(decisions.decision) OVER (PARTITION BY contract_number ORDER BY snapshot_id) AS next_decision
+          decisions_old.decision AS decision_copy
+          ,LEAD(decisions_old.decision) OVER (PARTITION BY contract_number ORDER BY snapshot_id) AS next_decision
           , count(decision) OVER (PARTITION BY contract_number ORDER BY snapshot_id ROWS UNBOUNDED PRECEDING) AS num_previous_snapshots
           , *
-    FROM decisions
+    FROM decisions_old
 ) AS decisions_portion
 
 WHERE contract_number IN (
