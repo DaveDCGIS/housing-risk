@@ -18,13 +18,13 @@ def demo_reading_from_modeler(modeler):
  global y_pred
 	#predicted values for each model
  answers_dataframe = modeler.answers
- y_pred = answers_dataframe["KNeighborsClassifier_6"]
+ y_pred = answers_dataframe["KNeighbors_default"]
 
 	#'real' answers
  y_true = modeler.y_test
 	#score data
- kneighbors_accuracy = modeler.scores['KNeighborsClassifier_6']['accuracy']
- kneighbors_dictionary = modeler.scores['KNeighborsClassifier_6']
+ kneighbors_accuracy = modeler.scores['KNeighbors_default']['accuracy']
+ kneighbors_dictionary = modeler.scores['KNeighbors_default']
 	#not implemented:
 	#kneighbors_classification_report = modeler.scores['KNeighborsClassifier_6']['classification_report']
 	#print(modeler.scores)
@@ -33,10 +33,10 @@ def demo_reading_from_modeler(modeler):
 	#print(type(modeler.answers))
 	#print(classification_report(y_true, y_pred))
 
-#Next thing to work on 
+#Next thing to work on
  # fitted_model_instance = modeler.models["KNeighborsClassifier_6"]
   #other_fitted_model_instance = modeler.models["RandomForestClassifier"]
-  
+
   #
 	#iterate over a dictionary - this might be wrong syntax
  list_of_scores = []
@@ -87,8 +87,8 @@ def plot_classification_report(cr, title = None, cmap = None):
 	plt.ylabel('Classes')
 	plt.xlabel('Measures')
 	plt.show()
-	
-		
+
+
 #end of DDL copied stuff
 ################################3
 
@@ -120,11 +120,23 @@ def plot_classification_report(cr, title = None, cmap = None):
 #models = ['LinearSVC','KNeighborsClassifier']
 
 if __name__ == '__main__':
-	dataframe = run_models.load_data_pickle()
+    #Change these to True's if you want to run that model
+    models_to_run = {
+        'KNeighbors_default': True,
+        'RandomForest': False,
+        'LogisticRegression': False,
+        'SVC_rbf':False
+    }
+
+    #Choose the method for which data you want
+	#dataframe = run_models.load_data_pickle()
 	#dataframe = run_models.load_sample_data()
-	modeler = run_models.run_models(dataframe)
-	demo_reading_from_modeler(modeler)	
+    dataframe = run_models.load_real_data()
+
+    #Run the models
+    modeler = run_models.run_models(dataframe, models_to_run, debug = False)
+    demo_reading_from_modeler(modeler)
 	#roc_plot(modeler)
-cr = classification_report( modeler.y_test, y_pred)	
-plot_classification_report(cr)	
-print("Imported succesfully!")
+
+    cr = classification_report( modeler.y_test, y_pred)
+    plot_classification_report(cr)

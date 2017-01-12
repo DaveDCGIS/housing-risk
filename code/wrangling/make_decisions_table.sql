@@ -1,5 +1,5 @@
 /*Only run when using from SQL editor, drop is done separately when run from Python*/
---drop table decisions;
+drop table decisions;
 
 create table decisions
 as
