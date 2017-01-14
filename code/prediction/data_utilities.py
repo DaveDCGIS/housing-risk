@@ -306,9 +306,10 @@ def clean_dataframe(dataframe, debug=False):
     meta = get_meta_data()
     categorical_features = meta['categorical_features']
     for column_name in categorical_features:
-        categories = categorical_features[column_name]
-        categories_map = list_to_dict(categories)
-        dataframe[column_name] = dataframe[column_name].map(categories_map)
+        if column_name in dataframe.columns:
+            categories = categorical_features[column_name]
+            categories_map = list_to_dict(categories)
+            dataframe[column_name] = dataframe[column_name].map(categories_map)
 
     #Replacing string values in rent
     replace_mapping = { 'median_rent': {'-': numpy.nan,'100-': 100, '2,000+': 2000}}

@@ -71,7 +71,8 @@ def run_models(dataframe, models_to_run = {}, debug = False):
     X_names = col_names[1:]
 
     #Just one split for now
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=10)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=10, stratify = y)
+
 
     #Implement our pipeline
     pipe = data_utilities.get_custom_pipeline(col_names = X_names)
@@ -82,6 +83,13 @@ def run_models(dataframe, models_to_run = {}, debug = False):
     #Save the transformed data to a CSV file if desired, to make sure our transformations are working properly
     if debug == True:
         numpy.savetxt("after_pipeline_train.csv", X_train, delimiter=",", fmt='%10.5f')
+
+    #under sample the 'in' decisions from just the training data
+    undersample = True #later can make this a selectable choice
+    if undersample == True:
+        from imblearn.under_sampling import RandomUnderSampler
+        rus = RandomUnderSampler()
+        X_train, y_train = rus.fit_sample(X_train, y_train)
 
 
     ##################################################
@@ -100,14 +108,13 @@ def run_models(dataframe, models_to_run = {}, debug = False):
                       , "RandomForest": sklearn.ensemble.RandomForestClassifier()
                       , "LogisticRegression": sklearn.linear_model.LogisticRegression(penalty='l1', C=0.1)
                       , "SVC_rbf": SVC(kernel = 'rbf', probability = True, random_state = 0)
-                      #these are both processing very slow - excluding for now
-                     #  , "SVC_linear": SVC(kernel = 'linear', probability = True,  random_state = 0)
-                     #  , "SVC_poly": SVC(kernel = 'poly', degree = 3, probability = True,  random_state = 0)
+                      , "SVC_linear": SVC(kernel = 'linear', probability = True,  random_state = 0)
+                      , "SVC_poly": SVC(kernel = 'poly', degree = 3, probability = True,  random_state = 0)
                       }
 
     #TODO need to get the true/false dictionary of models_to_run to handle this appropriately.
-    #for i in range(3,13):
-    #    modeler.models["KNeighborsClassifier_{}".format(i)] = sklearn.neighbors.KNeighborsClassifier(n_neighbors=i)
+    for i in range(3,13):
+        modeler.models["KNeighborsClassifier_{}".format(i)] = sklearn.neighbors.KNeighborsClassifier(n_neighbors=i)
 
     #Attach training data
     modeler.X = X_train
@@ -155,22 +162,31 @@ if __name__ == '__main__':
     # Useful for debugging when you are running the program over and over again.
     if 'use_pickle' in sys.argv:
         dataframe = load_data_pickle()
-    if 'use_sample' in sys.argv:
+    elif 'use_sample' in sys.argv:
         dataframe = load_sample_data(debug=debug)
-    if 'use_real' in sys.argv:
+    elif 'use_real' in sys.argv:
         dataframe = load_real_data(debug=debug)
+    else:
+        dataframe = load_real_data(debug=debug)
+
 
     if 'make_data_pickle' in sys.argv:
         pickle_dataframe(dataframe)
 
     #Use argument variables to decide which of our models to run this time. Each one can be passed as a separate argument variable, or use 'all' to run them all
-    #Initialze with no models running
+    #Initialize with no models running
     models_to_run = {
-        'KNeighbors_default': False,
-        'RandomForest': False,
-        'LogisticRegression': False,
-        'SVC_rbf':False
+        'KNeighbors_default': True,
+        'RandomForest': True,
+        'LogisticRegression': True,
+        'SVC_rbf':False,
+        'SVC_linear':False,
+        'SVC_poly': False
     }
+
+    for i in range(3,13):
+        models_to_run["KNeighborsClassifier_{}".format(i)] = True
+
     if 'all' in sys.argv:
         for key in models_to_run:
             models_to_run[key] = True
@@ -179,6 +195,10 @@ if __name__ == '__main__':
             models_to_run[arg] = True
 
     modeler = run_models(dataframe, models_to_run, debug = debug)
+
+    if 'make_modeler_pickle' in sys.argv:
+        pickle_dataframe(modeler)
+
 
     #temporary tests for current dev stuff:
     print_classification_reports(modeler, models_to_run)

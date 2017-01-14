@@ -37,5 +37,58 @@
             "N"
           , "Y"
         ]
+
+        , "is_acc_old_ind": [
+            "N"
+          , "Y"
+        ]
+
+        , "is_acc_performance_based_ind": [
+            "N"
+          , "Y"
+        ]
+
+        , "is_hud_owned_ind": [
+            "N"
+          , "Y"
+        ]
+
+        , "mgmt_agent_company_type": [
+              "02                  ",
+              "Limited Dividend    ",
+              "05                  ",
+              "                    ",
+              "Non-Profit          ",
+              "01                  ",
+              "03                  ",
+              "Other               ",
+              "Profit Motivated    ",
+              "00                  "
+          ]
+
+        , "owner_company_type": [
+              "02                  ",
+              "04                  ",
+              "Limited Dividend    ",
+              "05                  ",
+              "Non-Profit          ",
+              "                    ",
+              "01                  ",
+              "03                  ",
+              "Other               ",
+              "Profit Motivated    ",
+              "00                  "
+            ]
+
+       ,  "primary_financing_type": [
+          "Green Retrofit                ",
+          "Insured                       ",
+          "HUD Held                      ",
+          "Flexible Subsidy              ",
+          "Non-Insured                   ",
+          "HUD Owned                     ",
+          "202/811                       ",
+          "                              "
+        ]
   }
 }
