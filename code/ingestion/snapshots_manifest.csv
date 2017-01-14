@@ -104,3 +104,6 @@ use,ACS_14_5YR_B25058_with_ann.csv,acs_rent_median,7/1/2012,/data/,https://s3.am
 use,ACS_14_5YR_B25059_with_ann.csv,acs_rent_upper,7/1/2012,/data/,https://s3.amazonaws.com/huddata/,acs/median_rent_by_tract/2014_5year/,ACS_14_5YR_B25059_with_ann.csv,upper_quartile
 use,fair_market_rent,fmr,11/28/2016,/data/,https://s3.amazonaws.com/huddata/,fair_market_rents/,fmr_all_1983_2017.csv,fmr_all
 use,geocode_id,geocode,12/2/2016,/data/,https://s3.amazonaws.com/huddata/,geocode/,PropertyID_FIPS_GeoID.csv,geo_id
+use,ACS_15_5YR_B25057_with_ann.csv,acs_rent_lower,7/1/2013,/data/,https://s3.amazonaws.com/huddata/,acs/median_rent_by_tract/2015_5year/,ACS_15_5YR_B25057_with_ann.csv,lower_quartile
+use,ACS_15_5YR_B25058_with_ann.csv,acs_rent_median,7/1/2013,/data/,https://s3.amazonaws.com/huddata/,acs/median_rent_by_tract/2015_5year/,ACS_15_5YR_B25058_with_ann.csv,median
+use,ACS_15_5YR_B25059_with_ann.csv,acs_rent_upper,7/1/2013,/data/,https://s3.amazonaws.com/huddata/,acs/median_rent_by_tract/2015_5year/,ACS_15_5YR_B25059_with_ann.csv,upper_quartile

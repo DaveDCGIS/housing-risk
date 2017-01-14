@@ -99,7 +99,7 @@ LEFT JOIN acs_rent_median AS rent
 ON g.geoid::TEXT = rent.geo_id2::TEXT
     AND
     --match the timing of the contract snapshot to the relevant year of rent data. Allow 2016 to use the most recently available data.
-    (CASE WHEN (EXTRACT(YEAR FROM manifest.date)::INTEGER) = 2016 THEN 2014 --TODO change this to 2015 when new data is uploaded
+    (CASE WHEN (EXTRACT(YEAR FROM manifest.date)::INTEGER) = 2016 THEN 2015 --TODO change this to 2015 when new data is uploaded
           ELSE (EXTRACT(YEAR FROM manifest.date)::INTEGER)
      END)
     =

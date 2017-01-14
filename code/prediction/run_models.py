@@ -38,13 +38,18 @@ def load_data_pickle():
     with open('dataframe.pickle', 'rb') as f:
         return pickle.load(f)
 
+def load_modeler_pickle():
+    logging.info("Loading modeler from pickle...")
+    with open('modeler.pickle', 'rb') as f:
+        return pickle.load(f)
+        
 def pickle_dataframe(dataframe):
     with open('dataframe.pickle', 'wb') as f:
         pickle.dump(dataframe, f)
 
-def pickle_dataframe(dataframe):
-    with open('dataframe.pickle', 'wb') as f:
-        pickle.dump(dataframe, f)
+def pickle_modeler(modeler):
+    with open('modeler.pickle', 'wb') as f:
+        pickle.dump(modeler, f)
 
 def check_array_errors(array):
     '''
@@ -197,7 +202,7 @@ if __name__ == '__main__':
     modeler = run_models(dataframe, models_to_run, debug = debug)
 
     if 'make_modeler_pickle' in sys.argv:
-        pickle_dataframe(modeler)
+        pickle_modeler(modeler)
 
 
     #temporary tests for current dev stuff:

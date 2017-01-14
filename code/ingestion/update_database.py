@@ -87,16 +87,15 @@ def csv_to_sql(manifest_path, database_choice):
 
             database_connection = engine.connect()
             if engine.dialect.has_table(database_connection, 'manifest'):
-                query_result = database_connection.execute("select skip from manifest where snapshot_id='{}'".format(row['snapshot_id']))
+                query_result = database_connection.execute("""select "skip" from manifest where snapshot_id='{}'""".format(row['snapshot_id']))
 
                 for query_row in query_result:
                     database_skip_val = query_row['skip']
-
-                if database_skip_val == "loaded":
-                    load_row = False
-                    manifest_df_copy.set_value(index, 'skip', 'loaded') #make sure we write 'loaded' to the manifest table when we finish this procedure (instead of 'use')
-                else:
-                    load_row = True
+                    if database_skip_val == "loaded":
+                        load_row = False
+                        manifest_df_copy.set_value(index, 'skip', 'loaded') #make sure we write 'loaded' to the manifest table when we finish this procedure (instead of 'use')
+                    else:
+                        load_row = True
             else:
                 #the 'manifest' table doesn't exist, so we are probably recreating the database for the first time
                 load_row = True
@@ -125,7 +124,7 @@ def csv_to_sql(manifest_path, database_choice):
                 logging.info("  download complete. Loading table " + str(index + 1) + " (" + tablename + ": "+ row['snapshot_id'] + ")")
                 headers = list(get_column_names(full_path))
 
-            with open(current_dir + "\" + constants['date_headers_filename']) as fh:
+            with open(current_dir + '\\' + constants['date_headers_filename']) as fh:
                 date_headers = json.load(fh)
                 parseable_headers = date_headers['date_headers']
             to_parse = list(set(parseable_headers) & set(headers))
@@ -169,4 +168,4 @@ def csv_to_sql(manifest_path, database_choice):
 
 
 if __name__ == '__main__':
-    csv_to_sql(current_dir + "\" + constants['manifest_filename'], 'database')
+    csv_to_sql(current_dir + '\\' + constants['manifest_filename'], 'database')
