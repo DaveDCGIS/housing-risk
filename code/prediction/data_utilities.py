@@ -41,6 +41,7 @@ import database_management
 ##########################################################################
 
 
+
 class ManyModels:
     '''
     A wrapper class for training multiple sklearn models on a single dataset
@@ -85,6 +86,9 @@ class ManyModels:
         self.X_test = None
         self.y_test = None
         self.y_names = []
+
+        self.version = ""
+        self.notes = ""
 
 
     #@property lets us add additional logic to the getters and setters for the X_test property (e.g., resetting the answers and scores)

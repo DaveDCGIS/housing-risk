@@ -42,7 +42,7 @@ def load_modeler_pickle():
     logging.info("Loading modeler from pickle...")
     with open('modeler.pickle', 'rb') as f:
         return pickle.load(f)
-        
+
 def pickle_dataframe(dataframe):
     with open('dataframe.pickle', 'wb') as f:
         pickle.dump(dataframe, f)
@@ -181,7 +181,7 @@ if __name__ == '__main__':
     #Use argument variables to decide which of our models to run this time. Each one can be passed as a separate argument variable, or use 'all' to run them all
     #Initialize with no models running
     models_to_run = {
-        'KNeighbors_default': True,
+        'KNeighbors_default': False,
         'RandomForest': True,
         'LogisticRegression': True,
         'SVC_rbf':False,
@@ -189,6 +189,7 @@ if __name__ == '__main__':
         'SVC_poly': False
     }
 
+    #KNeighbors
     for i in range(3,13):
         models_to_run["KNeighborsClassifier_{}".format(i)] = True
 
@@ -199,7 +200,11 @@ if __name__ == '__main__':
         if arg in models_to_run:
             models_to_run[arg] = True
 
+
+    #Run the model
     modeler = run_models(dataframe, models_to_run, debug = debug)
+    modeler.version = "undersampling"
+    modeler.notes = "January 15th version with undersampling"
 
     if 'make_modeler_pickle' in sys.argv:
         pickle_modeler(modeler)
