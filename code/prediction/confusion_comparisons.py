@@ -86,3 +86,5 @@ if __name__ == '__main__':
     modeler = run_models.load_modeler_pickle(pickle_name)
     scores_df = reformat_scores(modeler)
     make_graph(scores_df, modeler)
+
+    print(modeler.answers.describe())
