@@ -129,10 +129,10 @@ class ManyModels:
 
             self.scores[key] = { }
             if self.y_test is not None:
-                self.scores[key]['precision'] = round(metrics.precision_score(y_true = self.y_test, y_pred = self.answers[key].as_matrix(), average="weighted"),4)
-                self.scores[key]['recall'] = round(metrics.recall_score(y_true = self.y_test, y_pred=self.answers[key], average="weighted"),4)
-                self.scores[key]['accuracy'] = round(metrics.accuracy_score(y_true = self.y_test, y_pred=self.answers[key]),4)
-                self.scores[key]['f1'] = round(metrics.f1_score(y_true = self.y_test, y_pred=self.answers[key], average="weighted"),4)
+                self.scores[key]['precision'] = metrics.precision_score(y_true = self.y_test, y_pred = self.answers[key].as_matrix(), average=None)
+                self.scores[key]['recall'] = metrics.recall_score(y_true = self.y_test, y_pred=self.answers[key], average=None)
+                self.scores[key]['accuracy'] = metrics.accuracy_score(y_true = self.y_test, y_pred=self.answers[key])
+                self.scores[key]['f1'] = metrics.f1_score(y_true = self.y_test, y_pred=self.answers[key], average=None)
                 self.scores[key]['classification_report'] = classification_report(y_true = self.y_test, y_pred = self.answers[key].as_matrix(), target_names=self.y_names)
 
 

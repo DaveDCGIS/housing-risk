@@ -3,6 +3,7 @@
 ##################################################
 #external Imports
 import numpy as np
+import pandas
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -19,16 +20,38 @@ f, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, figsize=(8, 6), sharex=True)
 #Get the data we want to graph
 modeler = run_models.load_modeler_pickle()
 
+#Extract the scores needed and reformat them into the groupings needed by the graph
+scores_columns = ['model_name','precision_in','precision_out', 'recall_in', 'recall_out']
+scores_array = np.empty((0,5))
+i = 1
 for key in modeler.scores:
-    #TODO - need to extract the right value from this classification_report and save them to numpy arrays as with the below example.
-    #TODO - find out how classification_report is stored - can we access each number individually?
-    print(modeler.scores[key]["classification_report"])
-    
-x = np.array(list("ABCDEFGHI"))
-y1 = np.arange(1, 10)
-y2 = y1 - 5
+    precision = modeler.scores[key]["precision"] #numpy array of two values for precision of each class
+    recall = modeler.scores[key]["recall"] #numpy array of two values for recall of each class
+    test_array = np.concatenate(([key],precision, recall), axis=0)
+    reshaped_array = np.reshape(test_array, (1,5))
+    print(type(reshaped_array[0,1]))
+    scores_array = np.append(scores_array, reshaped_array, axis=0)
+    i += 1
+
+
+
+
+
+x = scores_array[:,0]
+y1 = scores_array[:,1]
+y2 = scores_array[:,2]
 y3 = rs.choice(y1, 9, replace=False)
 y4 = rs.choice(y1, 9, replace=False)
+
+print(x,y1)
+print(type(x[0]))
+
+print(type(y1[0]))
+#x = np.array(list("ABCDEFGHIJKLM"))
+#y1 = np.arange(1, 13)
+#y2 = scores_array[:,2]
+#y3 = rs.choice(y1, 9, replace=False)
+#y4 = rs.choice(y1, 9, replace=False)
 
 #Palettes
 #one method we could use
