@@ -111,6 +111,7 @@ def run_models(dataframe, models_to_run = {}, debug = False, undersample=False):
     modeler.models = {    "KNeighbors_default": sklearn.neighbors.KNeighborsClassifier()
                       , "RandomForest": sklearn.ensemble.RandomForestClassifier()
                       , "LogisticRegression": sklearn.linear_model.LogisticRegression(penalty='l1', C=0.1)
+                      , "GaussianNB": GaussianNB()
                       , "SVC_rbf": SVC(kernel = 'rbf', probability = True, random_state = 0)
                       , "SVC_linear": SVC(kernel = 'linear', probability = True,  random_state = 0)
                       , "SVC_poly": SVC(kernel = 'poly', degree = 3, probability = True,  random_state = 0)
@@ -183,6 +184,7 @@ if __name__ == '__main__':
         'KNeighbors_default': False,
         'RandomForest': True,
         'LogisticRegression': True,
+        'GaussianNB': True,
         'SVC_rbf':False,
         'SVC_linear':False,
         'SVC_poly': False
@@ -190,7 +192,7 @@ if __name__ == '__main__':
 
     #KNeighbors
     for i in range(3,13):
-        models_to_run["KNeighborsClassifier_{}".format(i)] = True
+        models_to_run["KNeighborsClassifier_{}".format(i)] = False
 
     if 'all' in sys.argv:
         for key in models_to_run:
@@ -202,8 +204,8 @@ if __name__ == '__main__':
 
     #Run the model
     modeler = run_models(dataframe, models_to_run, debug = debug, undersample=False)
-    modeler.version = "regularsampling"
-    modeler.notes = "January 15th version without undersampling"
+    modeler.version = "regularsampling_Gaussian"
+    modeler.notes = "January 16th version without undersampling - this adds primary_financing_type to data list"
 
     if 'make_modeler_pickle' in sys.argv:
         pickle_modeler(modeler, modeler.version + "_modeler.pickle")

@@ -41,7 +41,7 @@ SELECT
         , p.address_line_1_text as address
         , p.city_name_text as city
         , p.state_code as state
-        
+
         , g.geoid
         , rent.geo_id2
         */
@@ -50,7 +50,7 @@ SELECT
         , rent.hd01_vd01 AS median_rent
         , c.contract_term_months_qty
         , d.term_mths_lag AS previous_contract_term_months
-        --, 154 as previous_contract_term_months   --alternate since can't get decisions table data for previous contract_term now. 
+        --, 154 as previous_contract_term_months   --alternate since can't get decisions table data for previous contract_term now.
         , c.assisted_units_count
         , c.is_hud_administered_ind
         , TRIM(c.program_type_group_name) AS program_type_group_name
@@ -69,6 +69,7 @@ SELECT
         , p.is_hud_owned_ind
         , p.owner_company_type
         , p.mgmt_agent_company_type
+        , p.primary_financing_type
         --these are in the 'decisions' table because they are calculated, even though they do not change per contract.
         /*excluding for now because we need to keep these out of the test data so that we can get all DC buildings regardless of whether they have had a decision
         , d.br0_perc
