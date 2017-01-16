@@ -1,0 +1,66 @@
+<html>
+<head>
+
+  <!--put stuff that needs to be called before page-specific stuff here-->
+  <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/main.css">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script src="static/js/external/jquery.js"></script>
+  <script src="static/js/external/bootstrap.min.js"></script>
+
+
+  {% block head %}
+  <title>{% block title %}{%endblock %}: Housing Risk</title>
+  {% endblock %}
+
+</head>
+<body>
+
+  	<div class="bg-white">
+      <!-- Static navbar -->
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Housing Risk - Live Demo</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="/">Home</a></li>
+              <li><a href="http://housinginsights.org">Housing Insights Website</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->
+      </nav>
+
+
+
+  		<!--main body-->
+  		<div class="container">
+  			<div class="row">
+  			<div class="col-xs-12"><!--id="container-sub-wrapper"-->
+          {% block body %}
+
+          {% endblock %}
+  			</div>
+  			</div>
+  		</div>
+  	</div>
+
+  <!--page specific includes-->
+  	<!--none-->
+  <!--.page specific includes-->
+
+
+
+
+
+</body>
+</html>

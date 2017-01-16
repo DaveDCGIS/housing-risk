@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{%block title %}Demo{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <style>
+    <!--my custom page specific styles-->
+
+  </style>
+{% endblock %}
+
+{% block body %}
+    <h1>DC Contracts:</h1>
+    <ul>
+    {% for contract in dc_contracts %}
+        <li>
+        {% if contract['decision'] != contract['original_decision'] %}
+          <span style="color: rgba(189, 54, 33,1)">(changed)</span>
+        {% endif %}
+        {{contract['property_name_text']}}: {{contract['decision']}}, {{flag}}
+        </li>
+    {% endfor %}
+    </ul>
+{% endblock %}

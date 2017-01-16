@@ -156,6 +156,8 @@ class ManyModels:
 ##########################################################################
 ## Functions
 ##########################################################################
+def test_import():
+    print("I import correctly!")
 
 def run_simple_query():
     #Connect to the database

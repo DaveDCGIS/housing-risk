@@ -1,33 +1,16 @@
+/*
 
-/*stuff to add in:
---??inc?
-, previous_expiration_date
-
-, cast (null as integer) previous_churn_decisions
- , null churn_decisions_per_year
-
- , null rent_gross_amount_per_unit
- , null average_bedroom_count
- , null neighborhood_median_rent
- , null neighborhood_lower_quartile_rent
- , null neighbohood_upper_quartile_rent
+Very similar to select_decisions_data.sql - should be rebuilt from there instead of modifying this one
 
 
- , null as percent_increase_neighborhood_median_rent
- , null as percent_increase_neighborhood_upper_rent
- , null as percent_increase_neighborhood_lower_rent
-
- , null ratio_neighborhood_median_to_gross_rent
- , null ratio_neighborhood_lower_to_gross_rent
- , null ratio_neighborhood_upper_to_gross_rent
 
 */
 
 -------------------------------------
 SELECT
-        d.decision
+        --d.decision
 
-        /*
+
         --remove this stuff from the query before training (just for debugging)
          EXTRACT(YEAR FROM manifest.date) AS decision_data_year
          ,case when (EXTRACT(YEAR FROM manifest.date)::INTEGER) = 2016 then 2015
@@ -38,19 +21,19 @@ SELECT
         , c.contract_number
         , p.property_name_text
         , p.owner_organization_name
-        , p.address_line_1_text as address
+        , p.address_line1_text as address
         , p.city_name_text as city
         , p.state_code as state
-        
+
         , g.geoid
         , rent.geo_id2
-        */
+
 
         --Data we want
         , rent.hd01_vd01 AS median_rent
         , c.contract_term_months_qty
-        , d.term_mths_lag AS previous_contract_term_months
-        --, 154 as previous_contract_term_months   --alternate since can't get decisions table data for previous contract_term now. 
+        --, d.term_mths_lag as previous_contract_term_months
+        , 154 as previous_contract_term_months   --alternate since can't get decisions table data for previous contract_term now.
         , c.assisted_units_count
         , c.is_hud_administered_ind
         , TRIM(c.program_type_group_name) AS program_type_group_name
@@ -79,16 +62,17 @@ SELECT
         , d.br5_perc
         */
 
+/*
 --primary opening FROM statement, for use when making train/test data
 FROM decisions AS d
 LEFT JOIN
 contracts AS c
 ON c.contract_number = d.contract_number AND c.snapshot_id = d.snapshot_id
+*/
 
-/*
 --Alternative opening from statement when using to pull test data
 FROM contracts AS c
-*/
+
 LEFT JOIN properties AS p
 ON c.property_id = p.property_id AND SUBSTRING(c.snapshot_id FROM 2) = SUBSTRING(p.snapshot_id FROM 2)
 
@@ -117,16 +101,14 @@ ON g.geoid::TEXT = rent.geo_id2::TEXT
    			  END
 )::INTEGER
 
-
+/*
 WHERE d.decision IN ('in', 'out')
 AND d.churn_flag IS NULL
 AND rent.snapshot_id IS NOT NULL --skip years with no rent data
+*/
 
-/*
 --Alternate where statement to use when just getting current DC data
 where p.state_code ILIKE 'DC'
 AND c.snapshot_id = 'c2016-08'
 AND rent.snapshot_id is not null
 order by g.geoid
-
-*/
