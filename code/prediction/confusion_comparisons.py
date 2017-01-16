@@ -1,6 +1,9 @@
 ##################################################
 #Imports
 ##################################################
+#system imports
+import sys
+
 #external Imports
 import numpy as np
 import pandas
@@ -11,81 +14,75 @@ import matplotlib.pyplot as plt
 import data_utilities
 import run_models
 
-#Setup
-sns.set(style="white", context="talk")
-rs = np.random.RandomState(7)
-f, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, figsize=(8, 6), sharex=True)
 
 
-#Get the data we want to graph
-modeler = run_models.load_modeler_pickle()
+def reformat_scores(modeler):
+    #Extract the scores needed and reformat them into the groupings needed by the graph
+    scores_df = pandas.DataFrame(columns=['precision_in','precision_out', 'recall_in', 'recall_out'])
+    for key in modeler.scores:
+        precision = modeler.scores[key]["precision"] #numpy array of two values for precision of each class
+        recall = modeler.scores[key]["recall"] #numpy array of two values for recall of each class
+        all_scores = np.concatenate((precision,recall),axis=0)
+        all_scores_inverted = np.reshape(all_scores, (1,4))
+        temp_df = pandas.DataFrame(data=all_scores_inverted,
+                      index=[key],
+                      columns=['precision_in','precision_out', 'recall_in', 'recall_out'])
+        scores_df = scores_df.append(temp_df)
 
-#Extract the scores needed and reformat them into the groupings needed by the graph
-scores_columns = ['model_name','precision_in','precision_out', 'recall_in', 'recall_out']
-scores_array = np.empty((0,5))
-i = 1
-for key in modeler.scores:
-    precision = modeler.scores[key]["precision"] #numpy array of two values for precision of each class
-    recall = modeler.scores[key]["recall"] #numpy array of two values for recall of each class
-    test_array = np.concatenate(([key],precision, recall), axis=0)
-    reshaped_array = np.reshape(test_array, (1,5))
-    print(type(reshaped_array[0,1]))
-    scores_array = np.append(scores_array, reshaped_array, axis=0)
-    i += 1
+    return scores_df
 
+def make_graph(scores_df, modeler):
+    #Setup
+    sns.set(style="white", context="talk")
+    f, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, figsize=(8, 10.5), sharex=True)
+    ax1.set_ylim([0,1])
+    ax2.set_ylim([0,1])
+    ax3.set_ylim([0,1])
+    ax4.set_ylim([0,1])
 
+    #set colors
+    pal1 = "Reds_r"
+    pal2 = "Oranges_r"
+    pal3 = "Greens_r"
+    pal4 = "Blues_r"
 
+    #Sort data and assign consistent x
+    scores_df = scores_df.sort_values(by="precision_out", ascending=False)
+    x = scores_df.index.values
 
+    #Make the subplots
+    sns.barplot(x, scores_df['precision_in'], palette=pal1, ax=ax1)
+    ax1.set_ylabel("In: Precision")
 
-x = scores_array[:,0]
-y1 = scores_array[:,1]
-y2 = scores_array[:,2]
-y3 = rs.choice(y1, 9, replace=False)
-y4 = rs.choice(y1, 9, replace=False)
+    sns.barplot(x, scores_df['recall_in'], palette=pal2, ax=ax2)
+    ax2.set_ylabel("In: Recall")
 
-print(x,y1)
-print(type(x[0]))
+    sns.barplot(x, scores_df['precision_out'], palette=pal3, ax=ax3)
+    ax3.set_ylabel("Out: Precision")
 
-print(type(y1[0]))
-#x = np.array(list("ABCDEFGHIJKLM"))
-#y1 = np.arange(1, 13)
-#y2 = scores_array[:,2]
-#y3 = rs.choice(y1, 9, replace=False)
-#y4 = rs.choice(y1, 9, replace=False)
+    sns.barplot(x, scores_df['recall_out'], palette=pal4, ax=ax4)
+    ax4.set_ylabel("Out: Recall")
 
-#Palettes
-#one method we could use
-pal1 = sns.cubehelix_palette(x.size, start=0, rot=-0.5)
-pal2 = sns.cubehelix_palette(x.size, start=1, rot=-0.5)
-pal3 = sns.cubehelix_palette(x.size, start=2, rot=-0.5)
-pal4 = sns.cubehelix_palette(x.size, start=2, rot=-0.5)
+    #Add annotations
+    for ax in [ax1, ax2, ax3, ax4]:
+        for p in ax.patches:
+            ax.annotate(str(round(p.get_height(),2)), (p.get_x()+p.get_width()/2., p.get_height() * 1.1), ha='center')
 
-#overwrite above method
-pal1 = "Reds"
-pal2 = "Oranges"
-pal3 = "Greens"
-pal4 = "Blues"
+    # Finalize the plot
+    sns.despine(bottom=True)
+    plt.setp(f.axes, yticks=[])
+    plt.xticks(rotation=90)
+    plt.tight_layout(h_pad=3)
 
-
-sns.barplot(x, y1, palette=pal1, ax=ax1)
-ax1.set_ylabel("Precision - In")
-
-# Center the data to make it diverging
-sns.barplot(x, y2, palette=pal2, ax=ax2)
-ax2.set_ylabel("Recall - In")
-
-# Randomly reorder the data to make it qualitative
-sns.barplot(x, y3, palette=pal3, ax=ax3)
-ax3.set_ylabel("Precision - Out")
-
-sns.barplot(x, y4, palette=pal4, ax=ax4)
-ax4.set_ylabel("Recall - Out")
+    plt.savefig(modeler.version + "_confusion_comparisons.png")
 
 
-# Finalize the plot
-sns.despine(bottom=True)
-plt.setp(f.axes, yticks=[])
-plt.tight_layout(h_pad=3)
+if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        pickle_name = sys.argv[1]
+    else:
+        pickle_name = 'modeler.pickle'
 
-
-plt.savefig("output.png")
+    modeler = run_models.load_modeler_pickle(pickle_name)
+    scores_df = reformat_scores(modeler)
+    make_graph(scores_df, modeler)
