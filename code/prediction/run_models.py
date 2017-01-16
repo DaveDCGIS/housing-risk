@@ -38,17 +38,17 @@ def load_data_pickle():
     with open('dataframe.pickle', 'rb') as f:
         return pickle.load(f)
 
-def load_modeler_pickle():
+def load_modeler_pickle(pickle_name='modeler.pickle'):
     logging.info("Loading modeler from pickle...")
-    with open('modeler.pickle', 'rb') as f:
+    with open(pickle_name, 'rb') as f:
         return pickle.load(f)
-        
+
 def pickle_dataframe(dataframe):
     with open('dataframe.pickle', 'wb') as f:
         pickle.dump(dataframe, f)
 
-def pickle_modeler(modeler):
-    with open('modeler.pickle', 'wb') as f:
+def pickle_modeler(modeler, filename):
+    with open(filename, 'wb') as f:
         pickle.dump(modeler, f)
 
 def check_array_errors(array):
@@ -64,7 +64,7 @@ def check_array_errors(array):
     print('bad_indices, nan ', numpy.where(numpy.isnan(array)))
 
 
-def run_models(dataframe, models_to_run = {}, debug = False):
+def run_models(dataframe, models_to_run = {}, debug = False, undersample=False):
 
     dataframe = data_utilities.clean_dataframe(dataframe, debug = debug)
 
@@ -90,7 +90,6 @@ def run_models(dataframe, models_to_run = {}, debug = False):
         numpy.savetxt("after_pipeline_train.csv", X_train, delimiter=",", fmt='%10.5f')
 
     #under sample the 'in' decisions from just the training data
-    undersample = True #later can make this a selectable choice
     if undersample == True:
         from imblearn.under_sampling import RandomUnderSampler
         rus = RandomUnderSampler()
@@ -181,7 +180,7 @@ if __name__ == '__main__':
     #Use argument variables to decide which of our models to run this time. Each one can be passed as a separate argument variable, or use 'all' to run them all
     #Initialize with no models running
     models_to_run = {
-        'KNeighbors_default': True,
+        'KNeighbors_default': False,
         'RandomForest': True,
         'LogisticRegression': True,
         'SVC_rbf':False,
@@ -189,6 +188,7 @@ if __name__ == '__main__':
         'SVC_poly': False
     }
 
+    #KNeighbors
     for i in range(3,13):
         models_to_run["KNeighborsClassifier_{}".format(i)] = True
 
@@ -199,10 +199,14 @@ if __name__ == '__main__':
         if arg in models_to_run:
             models_to_run[arg] = True
 
-    modeler = run_models(dataframe, models_to_run, debug = debug)
+
+    #Run the model
+    modeler = run_models(dataframe, models_to_run, debug = debug, undersample=False)
+    modeler.version = "regularsampling"
+    modeler.notes = "January 15th version without undersampling"
 
     if 'make_modeler_pickle' in sys.argv:
-        pickle_modeler(modeler)
+        pickle_modeler(modeler, modeler.version + "_modeler.pickle")
 
 
     #temporary tests for current dev stuff:
