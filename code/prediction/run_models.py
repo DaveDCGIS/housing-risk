@@ -65,10 +65,13 @@ def check_array_errors(array):
 
 
 def run_models(dataframe, models_to_run = {}, debug = False, undersample=False):
+    #A utility class that holds models, data, scores and pipeline
+    modeler = data_utilities.ManyModels()
 
+    #Basic data cleaning - mostly converting categorical variables to numbers and dealing with different Null formats in the source data.
     dataframe = data_utilities.clean_dataframe(dataframe, debug = debug)
 
-    #Move the data into Numpy arrays - some pipeline methods require Numpy so cleaner to convert explicitly up front instead of passing in the dataframe
+    #Move the data into Numpy arrays
     logging.info("Splitting X and y from the data set...")
     col_names = list(dataframe)
     X = dataframe.iloc[:,1:].values
@@ -80,10 +83,10 @@ def run_models(dataframe, models_to_run = {}, debug = False, undersample=False):
 
 
     #Implement our pipeline
-    pipe = data_utilities.get_custom_pipeline(col_names = X_names)
+    modeler.pipe = data_utilities.get_custom_pipeline(col_names = X_names)
     logging.info("fit_transform our pipeline...")
-    X_train = pipe.fit_transform(X_train)
-    X_test = pipe.transform(X_test)
+    X_train = modeler.pipe.fit_transform(X_train)
+    X_test = modeler.pipe.transform(X_test)
 
     #Save the transformed data to a CSV file if desired, to make sure our transformations are working properly
     if debug == True:
@@ -97,10 +100,8 @@ def run_models(dataframe, models_to_run = {}, debug = False, undersample=False):
 
 
     ##################################################
-    #Set up our ManyModels instance
+    #Set up our models
     ##################################################
-    modeler = data_utilities.ManyModels()
-
     #Attach our unfitted model instances to the ManyModels instance
     from sklearn.neighbors import KNeighborsClassifier
     from sklearn.ensemble import RandomForestClassifier
@@ -117,7 +118,7 @@ def run_models(dataframe, models_to_run = {}, debug = False, undersample=False):
                       , "SVC_poly": SVC(kernel = 'poly', degree = 3, probability = True,  random_state = 0)
                       }
 
-    #TODO need to get the true/false dictionary of models_to_run to handle this appropriately.
+    #Different method for KNeighbors allows us to compare multiple k's
     for i in range(3,13):
         modeler.models["KNeighborsClassifier_{}".format(i)] = sklearn.neighbors.KNeighborsClassifier(n_neighbors=i)
 
@@ -142,6 +143,30 @@ def run_models(dataframe, models_to_run = {}, debug = False, undersample=False):
 
     return modeler
 
+def predict_all_models(dataframe, modeler, debug=False):
+
+    dataframe = data_utilities.clean_dataframe(dataframe, debug = debug)
+
+    #Move the data into Numpy arrays
+    logging.info("Splitting X and y from the data set...")
+    col_names = list(dataframe)
+    X = dataframe.iloc[:,1:].values
+    y = dataframe.iloc[:,0].values
+    X_names = col_names[1:]
+
+    #Implement our pipeline
+    #need to pass saved pipeline - attach to modeler?
+    #pipe = data_utilities.get_custom_pipeline(col_names = X_names)
+    logging.info("fit_transform our pipeline...")
+    X = pipe.transform(X)
+
+    #Attach testing data and create predictions (also calculates scores)
+    modeler.X_test = X
+    modeler.y_test = y
+    predicted_df = modeler.predict()
+
+    return modeler
+
 def print_classification_reports(modeler, models_to_run = {}):
     logging.info("-"*45)
     logging.info("Model Performance:")
@@ -153,16 +178,12 @@ def print_classification_reports(modeler, models_to_run = {}):
 
 if __name__ == '__main__':
 
-    #All of these argv are options you can pass to the command line to run certain parts of the file or change behavior of the program.
-    #Typically there is not a need for any argv - calling the program plain will implement default behavior
+    # Below are command line options. None are needed, except for a method for telling the run_models method
+        #which models to run. Use argument --all to all, otherwise either edit the dictionary manually or pass each model name as an argument.
 
-    #Debug option is for outputting CSV files of the data for comparison purposes
+    #Debug option is for outputting CSV files of the data for checking that transformations are happining properly
     debug = True if 'debug' in sys.argv else False
 
-    # Must use one of the below options to get the right data into the dataframe:
-        # use_data_pickle
-        # use_sample
-        # use_real
     # Pickled data is an option to speed up running the program by not having to access the database every time.
     # Useful for debugging when you are running the program over and over again.
     if 'use_pickle' in sys.argv:
@@ -194,7 +215,7 @@ if __name__ == '__main__':
     for i in range(3,13):
         models_to_run["KNeighborsClassifier_{}".format(i)] = False
 
-    if 'all' in sys.argv:
+    if '--all' in sys.argv:
         for key in models_to_run:
             models_to_run[key] = True
     for arg in sys.argv:
@@ -202,14 +223,13 @@ if __name__ == '__main__':
             models_to_run[arg] = True
 
 
-    #Run the model
+    #Run the model. Edit these notes
     modeler = run_models(dataframe, models_to_run, debug = debug, undersample=False)
-    modeler.version = "regularsampling_Gaussian"
-    modeler.notes = "January 16th version without undersampling - this adds primary_financing_type to data list"
+    modeler.version = "for_presentation_regular_sampling"
+    modeler.notes = "January 18th version without undersampling"
 
     if 'make_modeler_pickle' in sys.argv:
         pickle_modeler(modeler, modeler.version + "_modeler.pickle")
-
 
     #temporary tests for current dev stuff:
     print_classification_reports(modeler, models_to_run)

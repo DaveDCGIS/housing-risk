@@ -78,8 +78,9 @@ class ManyModels:
     def __init__(self):
 
         self.models = {}  #dict of 'modelname':sklearn.model_instance
-        self.X = numpy.array([[],[]]) #blank 2-d array
-        self.y = numpy.array([]) #blank 1-d array
+        self.X = numpy.array([[],[]]) #blank 2-d array, contains training data
+        self.y = numpy.array([]) #blank 1-d array, contains training answers
+        self.pipe = None #a pipeline for transforming this data. Should not contain a final model to predict. 
         self.answers = pandas.DataFrame() #Pandas dataframe where each row is a row of the test dataset, each column is a different model_list
         self.scores = {} #Nested dictionary of shape {'modelname': {'precision': #, 'recall': #, 'accuracy': #, 'f1': # }}
 

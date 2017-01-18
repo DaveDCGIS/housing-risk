@@ -1,30 +1,6 @@
-
-/*stuff to add in:
---??inc?
-, previous_expiration_date
-
-, cast (null as integer) previous_churn_decisions
- , null churn_decisions_per_year
-
- , null rent_gross_amount_per_unit
- , null average_bedroom_count
- , null neighborhood_median_rent
- , null neighborhood_lower_quartile_rent
- , null neighbohood_upper_quartile_rent
-
-
- , null as percent_increase_neighborhood_median_rent
- , null as percent_increase_neighborhood_upper_rent
- , null as percent_increase_neighborhood_lower_rent
-
- , null ratio_neighborhood_median_to_gross_rent
- , null ratio_neighborhood_lower_to_gross_rent
- , null ratio_neighborhood_upper_to_gross_rent
-
-*/
-
 -------------------------------------
 SELECT
+        --Our answers - what we want to train for
         d.decision
 
         /*
@@ -50,7 +26,7 @@ SELECT
         , rent.hd01_vd01 AS median_rent
         , c.contract_term_months_qty
         , d.term_mths_lag AS previous_contract_term_months
-        --, 154 as previous_contract_term_months   --alternate since can't get decisions table data for previous contract_term now.
+        --, 154 as previous_contract_term_months   --average contract length
         , c.assisted_units_count
         , c.is_hud_administered_ind
         , TRIM(c.program_type_group_name) AS program_type_group_name
@@ -70,24 +46,15 @@ SELECT
         , p.owner_company_type
         , p.mgmt_agent_company_type
         , p.primary_financing_type
-        --these are in the 'decisions' table because they are calculated, even though they do not change per contract.
-        /*excluding for now because we need to keep these out of the test data so that we can get all DC buildings regardless of whether they have had a decision
-        , d.br0_perc
-        , d.br1_perc
-        , d.br2_perc
-        , d.br3_perc
-        , d.br4_perc
-        , d.br5_perc
-        */
 
---primary opening FROM statement, for use when making train/test data
+--primary opening FROM statement, for use when making training data
 FROM decisions AS d
 LEFT JOIN
 contracts AS c
 ON c.contract_number = d.contract_number AND c.snapshot_id = d.snapshot_id
 
 /*
---Alternative opening from statement when using to pull test data
+--Alternative opening from statement when using to pull demo test data
 FROM contracts AS c
 */
 LEFT JOIN properties AS p
@@ -99,12 +66,11 @@ ON c.property_id = g.property_id
 LEFT JOIN manifest
 ON manifest.snapshot_id = c.snapshot_id
 
-
 LEFT JOIN acs_rent_median AS rent
 ON g.geoid::TEXT = rent.geo_id2::TEXT
     AND
     --match the timing of the contract snapshot to the relevant year of rent data. Allow 2016 to use the most recently available data.
-    (CASE WHEN (EXTRACT(YEAR FROM manifest.date)::INTEGER) = 2016 THEN 2015 --TODO change this to 2015 when new data is uploaded
+    (CASE WHEN (EXTRACT(YEAR FROM manifest.date)::INTEGER) = 2016 THEN 2015
           ELSE (EXTRACT(YEAR FROM manifest.date)::INTEGER)
      END)
     =
@@ -118,16 +84,15 @@ ON g.geoid::TEXT = rent.geo_id2::TEXT
    			  END
 )::INTEGER
 
-
+--Use this version when getting training data
 WHERE d.decision IN ('in', 'out')
 AND d.churn_flag IS NULL
-AND rent.snapshot_id IS NOT NULL --skip years with no rent data
+AND rent.snapshot_id IS NOT NULL --exclude years with no rent data
 
 /*
---Alternate where statement to use when just getting current DC data
+--Alternate where statement to use when just demo test data
 where p.state_code ILIKE 'DC'
 AND c.snapshot_id = 'c2016-08'
 AND rent.snapshot_id is not null
 order by g.geoid
-
 */

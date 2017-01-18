@@ -87,4 +87,9 @@ if __name__ == '__main__':
     scores_df = reformat_scores(modeler)
     make_graph(scores_df, modeler)
 
-    print(modeler.answers.describe())
+    print("How many times was each category guessed?")
+    print("Actual: ")
+    print(pandas.Series(modeler.y_test).value_counts())
+    for column in modeler.answers:
+        print(column)
+        print(modeler.answers[column].value_counts())
