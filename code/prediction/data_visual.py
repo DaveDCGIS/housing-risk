@@ -13,37 +13,7 @@ from matplotlib.colors import ListedColormap
 from bokeh.charts import BoxPlot, output_file, show
 from sklearn.metrics import classification_report
 import run_models
-
-def demo_reading_from_modeler(modeler):
- global y_pred
-	#predicted values for each model
- answers_dataframe = modeler.answers
- y_pred = answers_dataframe["KNeighbors_default"]
-
-	#'real' answers
- y_true = modeler.y_test
-	#score data
- kneighbors_accuracy = modeler.scores['KNeighbors_default']['accuracy']
- kneighbors_dictionary = modeler.scores['KNeighbors_default']
-	#not implemented:
-	#kneighbors_classification_report = modeler.scores['KNeighborsClassifier_6']['classification_report']
-	#print(modeler.scores)
-	#print(modeler.answers.head())
-	#print(type(modeler))
-	#print(type(modeler.answers))
-	#print(classification_report(y_true, y_pred))
-
-#Next thing to work on
- # fitted_model_instance = modeler.models["KNeighborsClassifier_6"]
-  #other_fitted_model_instance = modeler.models["RandomForestClassifier"]
-
-  #
-	#iterate over a dictionary - this might be wrong syntax
- list_of_scores = []
- for key in kneighbors_dictionary:
-  list_of_scores.append(kneighbors_dictionary[key])
-  print("Key: {}".format(key))
-  print("Value: {}".format(kneighbors_dictionary[key]))
+import sys
 
 #################################
 #Thanks Rebecca!
@@ -120,23 +90,14 @@ def plot_classification_report(cr, title = None, cmap = None):
 #models = ['LinearSVC','KNeighborsClassifier']
 
 if __name__ == '__main__':
-    #Change these to True's if you want to run that model
-    models_to_run = {
-        'KNeighbors_default': True,
-        'RandomForest': False,
-        'LogisticRegression': False,
-        'SVC_rbf':False
-    }
 
-    #Choose the method for which data you want
-	#dataframe = run_models.load_data_pickle()
-	#dataframe = run_models.load_sample_data()
-    dataframe = run_models.load_real_data()
+    if len(sys.argv) > 1:
+        pickle_name = sys.argv[1]
+    else:
+        pickle_name = 'modeler.pickle'
 
-    #Run the models
-    modeler = run_models.run_models(dataframe, models_to_run, debug = False)
-    demo_reading_from_modeler(modeler)
-	#roc_plot(modeler)
+    modeler = run_models.load_modeler_pickle(pickle_name)
 
+    y_pred = modeler.answers["RandomForest"]
     cr = classification_report( modeler.y_test, y_pred)
     plot_classification_report(cr)

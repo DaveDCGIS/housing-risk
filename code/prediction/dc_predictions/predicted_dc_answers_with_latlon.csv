@@ -1,0 +1,113 @@
+﻿contract_number,property_name_text,RandomForest,Lat,Lon
+DC390010018,BEECHER COOPERATIVE          *                    ,0,38.92137841,-77.08047362
+MD39Q941003,KENNEDY INSTITUTE                                 ,1,38.95120433,-77.09525564
+DC39CS94003,FRIENDSHIP TERRACE                                ,1,38.94907321,-77.08236855
+DC39M000054,FRIENDSHIP TERRACE                                ,0,38.94907321,-77.08236855
+DC39S901001,COLONY HOUSE                                      ,0,38.95053304,-77.02702024
+DC39CS94002,JOHNSON TOWERS                                    ,1,38.94227908,-77.0311425
+DC39T861001,JOHNSON TOWERS                                    ,0,38.94227908,-77.0311425
+DC39Q881003,Capital Commons                                   ,0,38.9424909,-77.03032603
+DC39S931005,UPSHUR HOUSE (MOORE TOWER)                        ,1,38.94213745,-77.0302073
+DC39Q941001,SUNFLOWER HOUSE                                   ,1,38.93350971,-77.03486645
+DC39A001002,OAK STREET APTS                                   ,0,38.93430708,-77.03473259
+DC39A001003,HUBBARD PLACE                                     ,0,38.93461778,-77.03317591
+DC39M000053,Columbia Heights Village Apts                     ,0,38.92705741,-77.03274396
+DC39T792004,WOODLEY HOUSE                                     ,0,38.92774206,-77.03363217
+DC39H001008,PARK ROAD APTS                                    ,0,38.93089038,-77.03297246
+DC39S021002,Victory Heights                                   ,0,38.92884143,-77.03202524
+DC39H001009,KENYON APTS                                       ,0,38.92936559,-77.03184037
+DC39A001001,TRINITY TOWERS                                    ,0,38.92816837,-77.03221177
+DC39T781003,Christopher Price House aka Belmont Apartments    ,0,38.92132342,-77.03011626
+DC390647201,Samuel J. Simmons NCBA Estates                    ,0,38.92624578,-77.03200286
+DC390007009,FAIRCLIFF PLAZA EAST                              ,0,38.92432713,-77.03190674
+DC39M000023,Fairmont I and II Apartments                      ,0,38.92422536,-77.03277391
+DC39M000022,Fairmont I and II Apartments                      ,0,38.92422536,-77.03277391
+DC390001013,Faircliff Plaza West                              ,0,38.92300711,-77.03234344
+DC39A001004,Claypoole Courts                                  ,0,38.92472256,-77.03361345
+DC39M000095,GLENN ARMS APTS                                   ,0,38.92387281,-77.03938306
+DC390012015,"The Covington Family Association,Inc.             ",0,38.92135354,-77.04320296
+DC39Q933001,The Gilbertson Haass House                        ,1,38.91425349,-77.03249098
+DC39M000041,Capital Manor Cooperative                         ,0,38.91888809,-77.0334955
+DC398023001,Paul Laurence Dunbar Apartments                   ,0,38.9174725,-77.03417182
+DC390007005,PORTNER PLACE                                     ,0,38.91723137,-77.03378715
+DC39T781002,TERRIFIC INN                                      ,0,38.91530255,-77.02892456
+DC39M000071,NORTHWEST COOP NO 15                              ,0,38.9113193,-77.01389863
+DC39L000010,GOLDEN RULE APTS                                  ,0,38.9018665,-77.01287352
+DC39H001001,CARMEL PLAZA NORTH                                ,0,38.9022293,-77.01419361
+DC392764201,Asbury Dwellings                                  ,0,38.91208339,-77.02157786
+DC39M000072,Second Northwest Cooperative No. 17               ,0,38.90814406,-77.01770298
+DC39T792001,GREEN DOOR                                        ,0,38.91200748,-77.03604735
+DC39M000033,GIBSON PLAZA                                      ,0,38.90794224,-77.02165259
+DC39M000035,LINCOLN WESTMORELAND I                            ,0,38.91345191,-77.02217728
+DC39L000078,FOSTER HOUSE                                      ,0,38.91215284,-77.02346652
+DC39L000008,1330 7th Street Apartments                        ,0,38.90811789,-77.0221966
+DC39M000025,1330 7th Street Apartments                        ,0,38.90811789,-77.0221966
+DC39M000026,KING TOWERS                                       ,0,38.90627252,-77.02846042
+DC390012019,RITCH HOMES                                       ,0,38.91235692,-77.03299387
+DC390704201,ST. MARY'S COURT                                  ,0,38.89886317,-77.0511477
+DC398023019,Wah Luck House                                    ,0,38.90022874,-77.02018939
+DC390010006,TEL COURT COOPERATIVE        *                    ,0,38.87275187,-77.01118038
+DC390017001,CONGRESS PARK II                                  ,0,38.84202881,-76.98702323
+DC390012007,CONGRESS PARK I                                   ,0,38.84233443,-76.98754198
+DC390003002,Parkchester Apartments                            ,0,38.85854529,-76.99712642
+DC39L000021,Woodberry Apartments                              ,1,38.84930544,-76.97350779
+DC390005003,Forest Ridge/The Vistas                           ,0,38.85494866,-76.99128143
+DC39L000067,Forest Ridge/The Vistas                           ,0,38.85494866,-76.99128143
+DC39L000081,Forest Ridge/The Vistas                           ,0,38.85494866,-76.99128143
+DC39M000092,Forest Ridge/The Vistas                           ,0,38.85494866,-76.99128143
+DC39K100004,LANGSTON LANE                                     ,0,38.85563699,-76.97223121
+DC39H001002,GARFIELD HILLS APTS                               ,0,38.85383641,-76.97272627
+DC390014006,Orchard Park  (Southview I)                       ,0,38.84524008,-76.97298286
+DC39H001005,Orchard Park  (Southview I)                       ,0,38.84524008,-76.97298286
+DC39T841001,ROBERT L WALKER HOUSE                             ,1,38.84744524,-76.97215964
+DC390005015,Huntington Village                                ,0,38.84396007,-76.97864374
+DC39Q891001,Otto B. Berg Apartments                           ,0,38.84411243,-76.97312025
+DC39K100006,Morris Road                                       ,1,38.86137967,-76.98899135
+DC390009001,Frederick Douglass                                ,0,38.86081309,-76.98595379
+DC39L000004,W STREET APARTMENTS                               ,0,38.86247352,-76.97991013
+DC39K100003,GALEN TERRACE                                     ,0,38.86277033,-76.98141933
+DC390007010,CARVER HALL APTS                                  ,0,38.85984538,-76.98519449
+DC390001015,Stoneridge Apts. Sec II                           ,1,38.88479438,-76.95577932
+DC39E000003,Benning Park Apartments                           ,0,38.88037463,-76.92797275
+DC39M000058,THE PENTACLE                                      ,0,38.8994212,-76.98180866
+DC390005009,BENNING COURTS                                    ,0,38.89912037,-76.97891289
+DC39M000060,AZEEZE BATES                                      ,0,38.89613593,-76.98296629
+DC398023017,CAPITOL HILL TOWERS                               ,0,38.89924616,-76.99381277
+DC392815201,DELTA TOWERS                                      ,0,38.9005577,-76.98433191
+DC390016002,IVY CITY                                          ,0,38.91174519,-76.98749884
+DC390001010,FORT LINCOLN SENIOR VILLAGE I                     ,0,38.92835972,-76.96023556
+DC398023020,Fort. Lincoln Senior Village III                  ,0,38.92126533,-76.95672928
+DC398023003,FORT LINCOLN SENIOR VILLAGE II                    ,0,38.92886584,-76.95926859
+DC39L000069,BROOKLAND MANOR aka Brentwood Village             ,0,38.92257279,-76.98610337
+DC39M000051,BROOKLAND MANOR aka Brentwood Village             ,0,38.92257279,-76.98610337
+DC39H001004,FRANKLIN COMMONS                                  ,0,38.92575316,-77.00499432
+DC39S981001,The View                                          ,0,38.92347943,-76.99673749
+DC39M000031,Edgewood Terrace Section IV AKA The Vista         ,0,38.92311471,-76.99787686
+DC39E000004,EDGEWOOD TERRACE I                                ,0,38.92390014,-76.99749766
+DC39T802001,CHHI House (Otis House)                           ,1,38.93417241,-76.99057903
+DC39T792003,ANCHOR HOUSING                                    ,0,38.93179601,-76.98202438
+DC39Q971001,Marigold Place                                    ,0,38.92420198,-76.99011745
+DC39Q961001,RILEY-CHEEKS HOUSE                                ,0,38.92466607,-76.98996539
+DC39M000030,HEDIN HOUSE                                       ,0,38.93429019,-76.96634513
+DC39S001001,North Capitol at Plymouth                         ,0,38.95406808,-77.00866516
+DC39L000007,Paradise At Parkside                              ,0,38.90605763,-76.95167893
+DC39L000015,MAYFAIR MANSIONS                                  ,0,38.90304186,-76.94912201
+DC39E000005,BENNING ROAD APTS                                 ,0,38.89300136,-76.9415986
+DC39T871003,ALLEN HOUSE                                       ,0,38.8917806,-76.95199994
+DC39S951003,DUPONT PARK ADVENTIST APTS.                       ,0,38.83035766,-76.99007435
+DC390017002,WHEELER TERRACE APARTMENTS                        ,0,38.83728504,-76.98966726
+DC39M000099,ATLANTIC TERRACE                                  ,0,38.82984458,-77.00246115
+DC39M000098,SOUTHERN HILLS APTS                               ,0,38.82776642,-77.00193662
+DC390007006,ATLANTIC GARDENS                                  ,0,38.82781202,-77.00005977
+DC39Q031002,54th Street Housing                               ,0,38.88221372,-76.92458868
+DC39E000022,ELSINORE COURTYARDS(Dhaka House)                  ,0,38.8819949,-76.92557052
+DC39H001003,BENNING HEIGHTS                                   ,0,38.88208722,-76.93992495
+DC39L000016,ST JAMES MUTUAL HOME                              ,1,38.87314359,-77.01419312
+DC39M000046,THE GREEN VALLEY APTS                             ,0,38.92623792,-76.97138468
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,

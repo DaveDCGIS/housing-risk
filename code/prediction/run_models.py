@@ -155,21 +155,17 @@ def predict_all_models(dataframe, modeler, debug=False):
     dataframe = data_utilities.clean_dataframe(dataframe, debug = debug)
 
     #Move the data into Numpy arrays
-    logging.info("Splitting X and y from the data set...")
     col_names = list(dataframe)
-    X = dataframe.iloc[:,1:].values
-    y = dataframe.iloc[:,0].values
-    X_names = col_names[1:]
+    X = dataframe.iloc[:,:].values
+    X_names = col_names[:]
 
     #Implement our pipeline
-    #need to pass saved pipeline - attach to modeler?
-    #pipe = data_utilities.get_custom_pipeline(col_names = X_names)
     logging.info("fit_transform our pipeline...")
     X = modeler.pipe.transform(X)
 
-    #Attach testing data and create predictions (also calculates scores)
+    #Attach testing data and create predictions
+    modeler.y_test = None
     modeler.X_test = X
-    modeler.y_test = y
     predicted_df = modeler.predict()
 
     return modeler
