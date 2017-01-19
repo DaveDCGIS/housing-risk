@@ -80,7 +80,7 @@ class ManyModels:
         self.models = {}  #dict of 'modelname':sklearn.model_instance
         self.X = numpy.array([[],[]]) #blank 2-d array, contains training data
         self.y = numpy.array([]) #blank 1-d array, contains training answers
-        self.pipe = None #a pipeline for transforming this data. Should not contain a final model to predict. 
+        self.pipe = None #a pipeline for transforming this data. Should not contain a final model to predict.
         self.answers = pandas.DataFrame() #Pandas dataframe where each row is a row of the test dataset, each column is a different model_list
         self.scores = {} #Nested dictionary of shape {'modelname': {'precision': #, 'recall': #, 'accuracy': #, 'f1': # }}
 
@@ -290,6 +290,7 @@ def get_custom_pipeline(col_names=None):
 
     pipeline = Pipeline([   ('imputer', Imputer())
                             ,('onehot', OneHotEncoder(categorical_features=mask, sparse=False))
+                            ,('minmax', MinMaxScaler())
                             ])
 
     return pipeline
@@ -321,10 +322,11 @@ def clean_dataframe(dataframe, debug=False):
     #Replacing string values in rent
     replace_mapping = { 'median_rent': {'-': numpy.nan,'100-': 100, '2,000+': 2000}}
     dataframe.replace(to_replace=replace_mapping, inplace=True)
+    dataframe['median_rent'] = pandas.to_numeric(dataframe['median_rent'], errors='ignore')
 
     if debug == True:
         logging.info("  saving csv of cleaned data")
-        dataframe.to_csv('after_clean.csv')
+        dataframe.to_csv('after_clean_all_data.csv')
 
     return dataframe
 

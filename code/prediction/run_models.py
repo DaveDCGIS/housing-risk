@@ -29,7 +29,7 @@ def load_real_data(debug = False):
 def load_sample_data(debug = False):
     dataframe = data_utilities.get_sample_decisions_table(equal_split = True)
     if debug == True:
-        dataframe.to_csv('before.csv')
+        dataframe.to_csv('before_raw_sql_results.csv')
 
     return dataframe
 
@@ -79,8 +79,14 @@ def run_models(dataframe, models_to_run = {}, debug = False, undersample=False):
     X_names = col_names[1:]
 
     #Just one split for now
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=10, stratify = y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=200, stratify = y)
 
+    #Save the transformed data to a CSV file if desired, to make sure our transformations are working properly
+    if debug == True:
+        with open ("before_pipeline_training_data.csv", 'wb') as f:
+            array_to_write = numpy.nan_to_num(X_train)
+            print(array_to_write[:,:])
+            numpy.savetxt(f, array_to_write, delimiter=",", fmt='%10.5f')
 
     #Implement our pipeline
     modeler.pipe = data_utilities.get_custom_pipeline(col_names = X_names)
@@ -90,7 +96,8 @@ def run_models(dataframe, models_to_run = {}, debug = False, undersample=False):
 
     #Save the transformed data to a CSV file if desired, to make sure our transformations are working properly
     if debug == True:
-        numpy.savetxt("after_pipeline_train.csv", X_train, delimiter=",", fmt='%10.5f')
+        with open ("after_pipeline_training_data.csv", 'wb') as f:
+            numpy.savetxt(f, X_train, delimiter=",", fmt='%10.5f')
 
     #under sample the 'in' decisions from just the training data
     if undersample == True:
@@ -120,7 +127,7 @@ def run_models(dataframe, models_to_run = {}, debug = False, undersample=False):
 
     #Different method for KNeighbors allows us to compare multiple k's
     for i in range(3,13):
-        modeler.models["KNeighborsClassifier_{}".format(i)] = sklearn.neighbors.KNeighborsClassifier(n_neighbors=i)
+        modeler.models["KNeighbors_{}".format(i)] = sklearn.neighbors.KNeighborsClassifier(n_neighbors=i)
 
     #Attach training data
     modeler.X = X_train
@@ -158,7 +165,7 @@ def predict_all_models(dataframe, modeler, debug=False):
     #need to pass saved pipeline - attach to modeler?
     #pipe = data_utilities.get_custom_pipeline(col_names = X_names)
     logging.info("fit_transform our pipeline...")
-    X = pipe.transform(X)
+    X = modeler.pipe.transform(X)
 
     #Attach testing data and create predictions (also calculates scores)
     modeler.X_test = X
@@ -204,8 +211,8 @@ if __name__ == '__main__':
     models_to_run = {
         'KNeighbors_default': False,
         'RandomForest': True,
-        'LogisticRegression': True,
-        'GaussianNB': True,
+        'LogisticRegression': False,
+        'GaussianNB': False,
         'SVC_rbf':False,
         'SVC_linear':False,
         'SVC_poly': False
@@ -213,7 +220,7 @@ if __name__ == '__main__':
 
     #KNeighbors
     for i in range(3,13):
-        models_to_run["KNeighborsClassifier_{}".format(i)] = False
+        models_to_run["KNeighbors_{}".format(i)] = False
 
     if '--all' in sys.argv:
         for key in models_to_run:
@@ -222,14 +229,33 @@ if __name__ == '__main__':
         if arg in models_to_run:
             models_to_run[arg] = True
 
+    #Defaults for sampling method
+    undersample = False
+    if '--undersample' in sys.argv:
+        undersample = True
 
     #Run the model. Edit these notes
-    modeler = run_models(dataframe, models_to_run, debug = debug, undersample=False)
-    modeler.version = "for_presentation_regular_sampling"
-    modeler.notes = "January 18th version without undersampling"
+    modeler = run_models(dataframe, models_to_run, debug = debug, undersample=undersample)
+    modeler.version = "add_version_name_here"
+    modeler.notes = "Add description of what was modeled"
 
     if 'make_modeler_pickle' in sys.argv:
         pickle_modeler(modeler, modeler.version + "_modeler.pickle")
+
+    logging.info("Data about the pipeline:")
+    #How to interpret this data:
+        # - integer i in feature_indices_list[i] indicates the first column index occupied by the categorical variable that was in position [i] in the source matrix.
+        #   That column occupies all positions between position returned by [i] and one less than position returned by [i+1]
+        #   But, not all of these are actually printed to the matrix (some are suppressed)
+        # - Active features lists all features that are actually encoded in the matrix.
+        # - n_features lists the number of features actually identified in each column (which should correspond to which ones have values suppressed)
+        # Could use this logic to re-label the data.
+        # onehotencoder returns the matrix with categorical values listed first and continuous values listed second (i.e. the order is rearranged from what is provided
+    logging.info("feature_indices_ from OneHotEncoder for each categorical feature: {}".format(modeler.pipe.named_steps['onehot'].feature_indices_))
+    print("Active feature indices: {}".format(modeler.pipe.named_steps['onehot'].active_features_))
+    print("n_values in each categorical feature: {}".format(modeler.pipe.named_steps['onehot'].n_values_))
+
+
 
     #temporary tests for current dev stuff:
     print_classification_reports(modeler, models_to_run)

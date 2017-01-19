@@ -1,0 +1,73 @@
+How many times was each category guessed?
+Actual:
+0    8809
+1    1149
+dtype: int64
+SVC_poly
+0    5544
+1    4414
+Name: SVC_poly, dtype: int64
+KNeighborsClassifier_3
+0    5782
+1    4176
+Name: KNeighborsClassifier_3, dtype: int64
+SVC_rbf
+0    5361
+1    4597
+Name: SVC_rbf, dtype: int64
+LogisticRegression
+0    5456
+1    4502
+Name: LogisticRegression, dtype: int64
+KNeighborsClassifier_11
+0    5609
+1    4349
+Name: KNeighborsClassifier_11, dtype: int64
+KNeighborsClassifier_7
+0    5704
+1    4254
+Name: KNeighborsClassifier_7, dtype: int64
+SVC_linear
+0    5361
+1    4597
+Name: SVC_linear, dtype: int64
+KNeighborsClassifier_6
+0    6783
+1    3175
+Name: KNeighborsClassifier_6, dtype: int64
+RandomForest
+0    6535
+1    3423
+Name: RandomForest, dtype: int64
+KNeighbors_default
+0    5700
+1    4258
+Name: KNeighbors_default, dtype: int64
+KNeighborsClassifier_10
+0    6430
+1    3528
+Name: KNeighborsClassifier_10, dtype: int64
+KNeighborsClassifier_8
+0    6586
+1    3372
+Name: KNeighborsClassifier_8, dtype: int64
+KNeighborsClassifier_12
+0    6320
+1    3638
+Name: KNeighborsClassifier_12, dtype: int64
+KNeighborsClassifier_9
+0    5679
+1    4279
+Name: KNeighborsClassifier_9, dtype: int64
+GaussianNB
+0    9466
+1     492
+Name: GaussianNB, dtype: int64
+KNeighborsClassifier_4
+0    7055
+1    2903
+Name: KNeighborsClassifier_4, dtype: int64
+KNeighborsClassifier_5
+0    5700
+1    4258
+Name: KNeighborsClassifier_5, dtype: int64

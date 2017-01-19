@@ -22,19 +22,14 @@ SELECT
         , rent.geo_id2
         */
 
-        --Data we want
+        -----Data we want-----
+        --Continuous variables
         , rent.hd01_vd01 AS median_rent
         , c.contract_term_months_qty
         , d.term_mths_lag AS previous_contract_term_months
         --, 154 as previous_contract_term_months   --average contract length
         , c.assisted_units_count
-        , c.is_hud_administered_ind
-        , TRIM(c.program_type_group_name) AS program_type_group_name
         , c.rent_to_FMR_ratio
-        , c.is_acc_old_ind
-        , c.is_acc_performance_based_ind
-        , c.rent_to_FMR_ratio
-
         , c."0br_count" br0_count
         , c."1br_count" br1_count
         , c."2br_count" br2_count
@@ -42,6 +37,11 @@ SELECT
         , c."4br_count" br4_count
         , c."5plusbr_count" br5_count
 
+        --Categorical variables
+        , TRIM(c.program_type_group_name) AS program_type_group_name
+        , c.is_hud_administered_ind
+        , c.is_acc_old_ind
+        , c.is_acc_performance_based_ind
         , p.is_hud_owned_ind
         , p.owner_company_type
         , p.mgmt_agent_company_type
