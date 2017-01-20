@@ -7,19 +7,75 @@
   <style>
     <!--my custom page specific styles-->
 
+
   </style>
 {% endblock %}
 
+
+{% macro render_field(field) %}
+  <dt>{{ field.label }}
+  <dd>{{ field(**kwargs)|safe }}
+  {% if field.errors %}
+    <p style="color:red">
+    {% for error in field.errors %}
+      {{ error }} , 
+    {% endfor %}
+    </p>
+  {% endif %}
+  </dd>
+{% endmacro %}
+
+
+
 {% block body %}
+    <h1>Model a New Scenario:</h1>
+    <form method="POST">
+      {{model_parameters_form.csrf_token}}
+      {{ render_field(model_parameters_form.median_rent) }}<br/>
+      {{ render_field(model_parameters_form.contract_term_months_qty) }}<br/>
+      {{model_parameters_form.submit()}} <br/>
+    </form>
+
+    {% if rent_entered != "No changes" or months_entered != "No changes" %}
+        <div class="alert alert-info alert-dismissible" role="alert" data-dismiss="alert">
+          The results of your scenario are shown below. 
+          <ul>
+            <li>Median rent: {{rent_entered}}</li>
+            <li>Contract term: {{months_entered}}</li>
+          </ul>
+        </div>
+    {% endif %}
+
     <h1>DC Contracts:</h1>
     <ul>
     {% for contract in dc_contracts %}
         <li>
-        {% if contract['decision'] != contract['original_decision'] %}
+        {% if contract['new_decision'] != contract['original_decision'] %}
           <span style="color: rgba(189, 54, 33,1)">(changed)</span>
         {% endif %}
-        {{contract['property_name_text']}}: {{contract['decision']}}, {{flag}}
+        {{contract['property_name_text']}}: 
+
+        <!--out formatting-->
+        {% if contract['new_decision'] == 'out' %}
+          <span class="outflag" style="color: #000; background-color: #ff9999;  margin: 2px 2px 2px 2px; border-radius:2px;">
+            {{contract['new_decision']}}
+          </span>
+        {% endif %}
+
+        <!--in formatting-->
+        {% if contract['new_decision'] == 'in' %}
+          <span class="outflag" style="color: #000; background-color: #A8E0F2;  margin: 2px 2px 2px 2px; border-radius:2px;">
+            {{contract['new_decision']}}
+          </span>
+        {% endif %}
+
+
         </li>
     {% endfor %}
     </ul>
+
+<script>
+  $(".alert").alert()
+</script>
 {% endblock %}
+

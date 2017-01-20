@@ -3,6 +3,14 @@
 ##########################################################################
 '''
 Runs a Flask-based web server that can dynamically run our models for us.
+
+
+
+Warning - overall pretty quick and dirty - not great attention payed to consistent
+or short variable names, or the ability to reuse code sections. 
+Just getting a website up in time for the presentation.
+
+
 '''
 
 
@@ -45,7 +53,7 @@ def clean_dataframe(dataframe, debug=False):
         dataframe.replace(to_replace=replace_mapping, inplace=True)
         dataframe['median_rent'] = pandas.to_numeric(dataframe['median_rent'], errors='ignore')
     except TypeError:
-        print("error caught")
+        print("No rent data replacement needed")
         #Probably the median_rent column already had all numbers in it
         pass
 
@@ -57,6 +65,16 @@ def clean_dataframe(dataframe, debug=False):
 ##########################################################################
 ## Modeling setup and functions
 ##########################################################################
+def predict(dataframe, model):
+    new_dataframe = dataframe.copy()
+    new_dataframe = clean_dataframe(new_dataframe, debug = False)
+    X = new_dataframe.iloc[:,:].values
+    X = pipe.transform(X)
+
+    #Initial predictions
+    y = model.predict(X)
+
+    return y
 
 
 #Get our data and models
@@ -76,45 +94,102 @@ only_testing_fields_dataframe = dc_data.loc[:,['median_rent', 'contract_term_mon
                                'owner_company_type', 'mgmt_agent_company_type',
                                'primary_financing_type']]
 
-only_identifying_fields = dc_data[['decision_data_year', 'altered_decision_data_year', 'rent_snapshot_id',
-       'contract_snapshot_id', 'contract_number', 'property_name_text',
-       'owner_organization_name', 'address', 'city', 'state', 'geoid',
-       'geo_id2']]
-only_testing_fields_dataframe = clean_dataframe(only_testing_fields_dataframe, debug = False)
-X = only_testing_fields_dataframe.iloc[:,:].values
-X = pipe.transform(X)
-
-#Initial predictions
-y = random_forest.predict(X)
-print(y)
-
+only_identifying_fields_dataframe = dc_data.loc[:,['decision_data_year', 'altered_decision_data_year', 'rent_snapshot_id',
+                                   'contract_snapshot_id', 'contract_number', 'property_name_text',
+                                   'owner_organization_name', 'address', 'city', 'state', 'geoid',
+                                   'geo_id2']]
 
 ##########################################################################
 ## Web Application
 ##########################################################################
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'ALIEXOPADPQLXSDIEOLQPPPOIM' #random string configured for demo purposes (would need to be config variable in a live site)
+
+
+
+#form data
+form = ['contract_term_months_qty', 'median_rent']
+
+from flask.ext.wtf import Form
+from wtforms import StringField, IntegerField, SubmitField
+from wtforms.validators import Required, NumberRange, Optional
+
+class ModelParametersForm(Form):
+    median_rent = IntegerField('Neighborhood median rent:', validators=[Optional(), NumberRange(500,3000)])
+    contract_term_months_qty = IntegerField('Most recent contract duration (months):', validators=[Optional(), NumberRange(6,240)])
+    submit = SubmitField('Create Predictions')
+
 
 
 #views
-@app.route('/')
+@app.route('/', methods = ['GET', 'POST'])
 def index():
 
-    dc_contracts = [] #a list of dictionaries, each dictionary is a data type.
-    #Temporary method - convert the list of properties to a dictionary and randomly assign
+    #Handle form configuration and setup
+    model_parameters_form = ModelParametersForm()
+    rent_entered = None
+    months_entered = None
+
+
+    if model_parameters_form.validate_on_submit():
+        print("successful form validation")
+        rent_entered = model_parameters_form.median_rent.data
+        months_entered = model_parameters_form.contract_term_months_qty.data
+
+    #Use the provided inputs to alter the modeling data
+    data_copy = only_testing_fields_dataframe.copy()
+
+    initial_y = predict(data_copy, random_forest)
+    new_y = predict(data_copy, random_forest)
+
+
+
+
+    if rent_entered != None or months_entered != None:
+        if rent_entered != None:
+            pass
+            data_copy['median_rent'] = rent_entered
+        if months_entered != None:
+            pass
+            #Assume that the current contract becomes the previous one, and then use the value entered
+            data_copy['previous_contract_term_months'] = only_testing_fields_dataframe['contract_term_months_qty']
+            data_copy['contract_term_months_qty'] = months_entered
+
+    new_y = predict(data_copy, random_forest)
+
+    #Quick validation for debugging
+    count_out_decisions = 0
+    for d in numpy.nditer(new_y):
+        count_out_decisions = count_out_decisions + d
+    print("Quantity of out decisions: {}".format(count_out_decisions))
+
+    #Prep variables for display based on user inputs
+    if rent_entered == None:
+        rent_entered = "No changes"
+    if months_entered == None:
+        months_entered = "No changes"
+
+    #Prep the list of buildings with their decision in format useful for the view page. 
+    dc_contracts = [] #a list of dictionaries
     names_list = list(dc_data["property_name_text"])
 
-    for value in names_list:
+    for index, value in enumerate(names_list):
+        i = "in" if initial_y.item(index)==0 else 'out'
+        n = "in" if new_y.item(index)==0 else 'out'
         new_building = {"property_name_text": value
-                        ,"original_decision": 'in'
+                        ,"original_decision": i
+                        ,"new_decision": n
                         }
-        if value in ['BEECHER COOPERATIVE          *                    ']:
-            new_building["decision"] = "out"
-        else:
-            new_building["decision"] = "in"
 
         dc_contracts.append(new_building)
 
-    return render_template('main.html', myvar = "dummy", dc_contracts = dc_contracts)
+    return render_template('main.html', 
+                            myvar = "dummy", 
+                            dc_contracts = dc_contracts, 
+                            model_parameters_form = model_parameters_form, 
+                            rent_entered = rent_entered,
+                            months_entered = months_entered
+                            )
 
 
 #Run the app
