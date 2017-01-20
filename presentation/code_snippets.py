@@ -1,3 +1,4 @@
+
 class ManyModels:
     def __init__(self):
 
@@ -5,12 +6,12 @@ class ManyModels:
         self.X = numpy.array([[],[]]) #blank 2-d array, contains training data
         self.y = numpy.array([]) #blank 1-d array, contains training answers
         self.pipe = None #a pipeline for transforming this data. Should not contain a final model to predict.
-        self.answers = pandas.DataFrame() #Pandas dataframe where each row is a row of the test dataset, each column is a different model_list
-        self.scores = {} #Nested dictionary of shape {'modelname': {'precision': #, 'recall': #, 'accuracy': #, 'f1': # }}
 
         self.X_test = None
         self.y_test = None
         self.y_names = []
+        self.answers = pandas.DataFrame() #Pandas dataframe where each row is a row of the test dataset, each column is a different model_list
+        self.scores = {} #Nested dictionary of shape {'modelname': {'precision': #, 'recall': #, 'accuracy': #, 'f1': # }}
 
         self.version = ""
         self.notes = ""
@@ -106,6 +107,22 @@ def make_graph(scores_df, modeler, color = "Blues"):
     plt.savefig(modeler.version + "_confusion_comparisons.png")
 
 
+
+
+
+
+    modeler.models = {    "KNeighbors_default": sklearn.neighbors.KNeighborsClassifier()
+                      , "RandomForest": sklearn.ensemble.RandomForestClassifier()
+                      , "LogisticRegression": sklearn.linear_model.LogisticRegression(penalty='l1', C=0.1)
+                      , "GaussianNB": GaussianNB()
+                      , "SVC_rbf": SVC(kernel = 'rbf', probability = True, random_state = 0)
+                      , "SVC_linear": SVC(kernel = 'linear', probability = True,  random_state = 0)
+                      , "SVC_poly": SVC(kernel = 'poly', degree = 3, probability = True,  random_state = 0)
+                      }
+
+    #Different method for KNeighbors allows us to compare multiple k's
+    for i in range(3,13):
+        modeler.models["KNeighbors_{}".format(i)] = sklearn.neighbors.KNeighborsClassifier(n_neighbors=i)
 
 
 

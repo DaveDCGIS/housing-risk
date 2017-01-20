@@ -14,82 +14,86 @@ from flask import Flask
 from flask import render_template
 import pickle
 import pandas
+import json
+from sklearn.ensemble import RandomForestClassifier
+import numpy
+
+from sklearn.preprocessing import StandardScaler, Imputer, LabelEncoder, MinMaxScaler, OneHotEncoder
+from sklearn.pipeline import Pipeline
 
 
+def clean_dataframe(dataframe, debug=False):
+    '''
+    A modified version of clean_dataframe copied from the 
+    prediction/data_utilities.py, edited so that it can operate 
+    standalone (had conflicts with Flask)
+    '''
+    #Convert all the categorical names to numbers.
+    with open('meta.json', 'r') as f:
+            meta = json.load(f)
 
-#Allow modules to import each other at parallel file structure (TODO clean up this configuration in a refactor, it's messy...)
-from inspect import getsourcefile
-import os, sys, json
-current_path = os.path.abspath(getsourcefile(lambda:0))
-current_dir = os.path.dirname(current_path)
-parent_dir = current_dir[:current_dir.rfind(os.path.sep)]
-repo_dir = parent_dir[:parent_dir.rfind(os.path.sep)]
-sys.path.insert(0, parent_dir)
+    categorical_features = meta['categorical_features']
+    for column_name in categorical_features:
+        if column_name in dataframe.columns:
+            categories = categorical_features[column_name]
+            categories_map = {x:i for i,x in enumerate(categories)}
+            dataframe[column_name] = dataframe[column_name].map(categories_map)
 
-#my imported modules somehow break the debug mode of Flask...
-#import database_management
-#import prediction.data_utilities as data_utilities
-#data_utilities.test_import()
+    #Replacing string values in rent
+    replace_mapping = { 'median_rent': {'-': numpy.nan,'100-': 100, '2,000+': 2000}}
+    try:
+        dataframe.replace(to_replace=replace_mapping, inplace=True)
+        dataframe['median_rent'] = pandas.to_numeric(dataframe['median_rent'], errors='ignore')
+    except TypeError:
+        print("error caught")
+        #Probably the median_rent column already had all numbers in it
+        pass
+
+    return dataframe
+
+
 
 
 ##########################################################################
-## Application
+## Modeling setup and functions
 ##########################################################################
 
+
+#Get our data and models
+with open('random_forest.pickle', 'rb') as f:
+    random_forest = pickle.load(f)
+with open('pipe.pickle', 'rb') as f:
+    pipe = pickle.load(f)
+dc_data = pandas.read_csv('static/dc_testing_data.csv')
+
+#Split and clean our data
+only_testing_fields_dataframe = dc_data.loc[:,['median_rent', 'contract_term_months_qty',
+                               'previous_contract_term_months', 'assisted_units_count',
+                               'rent_to_fmr_ratio', 'br0_count', 'br1_count', 'br2_count', 'br3_count',
+                               'br4_count', 'br5_count', 'program_type_group_name',
+                               'is_hud_administered_ind', 'is_acc_old_ind',
+                               'is_acc_performance_based_ind', 'is_hud_owned_ind',
+                               'owner_company_type', 'mgmt_agent_company_type',
+                               'primary_financing_type']]
+
+only_identifying_fields = dc_data[['decision_data_year', 'altered_decision_data_year', 'rent_snapshot_id',
+       'contract_snapshot_id', 'contract_number', 'property_name_text',
+       'owner_organization_name', 'address', 'city', 'state', 'geoid',
+       'geo_id2']]
+only_testing_fields_dataframe = clean_dataframe(only_testing_fields_dataframe, debug = False)
+X = only_testing_fields_dataframe.iloc[:,:].values
+X = pipe.transform(X)
+
+#Initial predictions
+y = random_forest.predict(X)
+print(y)
+
+
+##########################################################################
+## Web Application
+##########################################################################
 app = Flask(__name__)
 
-#TODO currently not loading with no module named data_utilities error (although data_utilities is loading above). Google pickle problems load from different folder
-#print("Loading modeler from pickle...")
-#with open('modeler.pickle', 'rb') as f:
-#    modeler = pickle.load(f)
-
-#load data
-
-#TODO stuff that needs to happen for proper data loading:
-'''
-* add back in the contract data, address data etc. to the query
-* replace previous_contract_term_months (not available except for calculated decisions.... or could refactor decisions query)
-* split the data between identifiers and model data
-
-Current list of modeling fields (TODO this is to be updated):
-    median_rent
-    contract_term_months_qty
-    previous_contract_term_months
-    assisted_units_count
-    is_hud_administered_ind
-    program_type_group_name
-    rent_to_fmr_ratio
-    is_acc_old_ind
-    is_acc_performance_based_ind
-    rent_to_fmr_ratio
-    br0_count
-    br1_count
-    br2_count
-    br3_count
-    br4_count
-    br5_count
-    is_hud_owned_ind
-    owner_company_type
-    mgmt_agent_company_type
-
-Current list of identifier fields:
-    decision_data_year
-    altered_decision_data_year
-    rent_snapshot_id
-    contract_snapshot_id
-    contract_number
-    property_name_text
-    owner_organization_name
-    address
-    city
-    state
-    geoid
-    geo_id2
-
-'''
-
-dc_data = pandas.read_csv('static/example.csv')
-print("Looaded csv of the dc_data")
 
 #views
 @app.route('/')
@@ -118,9 +122,3 @@ if __name__ == '__main__':
     app.run(debug=True)
 
 
-
-
-
-
-
-    #print("App running...")

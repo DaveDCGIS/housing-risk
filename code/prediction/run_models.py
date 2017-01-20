@@ -115,6 +115,7 @@ def run_models(dataframe, models_to_run = {}, debug = False, undersample=False):
     from sklearn.linear_model import LogisticRegression
     from sklearn.naive_bayes import GaussianNB
     from sklearn.svm import SVC
+    
 
     modeler.models = {    "KNeighbors_default": sklearn.neighbors.KNeighborsClassifier()
                       , "RandomForest": sklearn.ensemble.RandomForestClassifier()
@@ -142,6 +143,15 @@ def run_models(dataframe, models_to_run = {}, debug = False, undersample=False):
             model_list.append(key)
     logging.info("Running models: {}".format(str(model_list)))
     modeler.fit(model_list=model_list)
+
+
+    #Do a quick PCA
+    from sklearn.decomposition import PCA
+    pca = PCA(n_components = 2, random_state=0) 
+    pca.fit(X_train)
+    pca_coefficients = pandas.DataFrame(pca.components_,index = ['PC-1','PC-2'])
+    if debug==True:
+        pca_coefficients.to_csv('pca_coefficients.csv')
 
     #Attach testing data and create predictions (also calculates scores)
     modeler.X_test = X_test
@@ -206,7 +216,7 @@ if __name__ == '__main__':
     #Initialize with no models running
     models_to_run = {
         'KNeighbors_default': False,
-        'RandomForest': True,
+        'RandomForest': False,
         'LogisticRegression': False,
         'GaussianNB': False,
         'SVC_rbf':False,
@@ -238,7 +248,7 @@ if __name__ == '__main__':
     if 'make_modeler_pickle' in sys.argv:
         pickle_modeler(modeler, modeler.version + "_modeler.pickle")
 
-    logging.info("Data about the pipeline:")
+    #logging.info("OneHot Encoded Variable specs")
     #How to interpret this data:
         # - integer i in feature_indices_list[i] indicates the first column index occupied by the categorical variable that was in position [i] in the source matrix.
         #   That column occupies all positions between position returned by [i] and one less than position returned by [i+1]
@@ -247,9 +257,9 @@ if __name__ == '__main__':
         # - n_features lists the number of features actually identified in each column (which should correspond to which ones have values suppressed)
         # Could use this logic to re-label the data.
         # onehotencoder returns the matrix with categorical values listed first and continuous values listed second (i.e. the order is rearranged from what is provided
-    logging.info("feature_indices_ from OneHotEncoder for each categorical feature: {}".format(modeler.pipe.named_steps['onehot'].feature_indices_))
-    print("Active feature indices: {}".format(modeler.pipe.named_steps['onehot'].active_features_))
-    print("n_values in each categorical feature: {}".format(modeler.pipe.named_steps['onehot'].n_values_))
+    #logging.info("feature_indices_ from OneHotEncoder for each categorical feature: {}".format(modeler.pipe.named_steps['onehot'].feature_indices_))
+    #logging.info("Active feature indices: {}".format(modeler.pipe.named_steps['onehot'].active_features_))
+    #logging.info("n_values in each categorical feature: {}".format(modeler.pipe.named_steps['onehot'].n_values_))
 
 
 

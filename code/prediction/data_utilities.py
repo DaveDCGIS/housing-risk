@@ -321,8 +321,13 @@ def clean_dataframe(dataframe, debug=False):
 
     #Replacing string values in rent
     replace_mapping = { 'median_rent': {'-': numpy.nan,'100-': 100, '2,000+': 2000}}
-    dataframe.replace(to_replace=replace_mapping, inplace=True)
-    dataframe['median_rent'] = pandas.to_numeric(dataframe['median_rent'], errors='ignore')
+    try:
+        dataframe.replace(to_replace=replace_mapping, inplace=True)
+        dataframe['median_rent'] = pandas.to_numeric(dataframe['median_rent'], errors='ignore')
+    except TypeError:
+        print("error caught")
+        #Probably the median_rent column already had all numbers in it
+        pass
 
     if debug == True:
         logging.info("  saving csv of cleaned data")
